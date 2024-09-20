@@ -16,10 +16,13 @@ import javax.inject.Singleton
 
 @Module
 object NetworkModule {
+
+    private val okHttpClientBuilder = OkHttpClient.Builder()
+
     @Provides
     @Singleton
-    fun provideOkHttpClient(authInterceptor: Lazy<AuthInterceptor>): OkHttpClient {
-        return OkHttpClient.Builder()
+    fun provideOkHttpClient(): OkHttpClient {
+        return okHttpClientBuilder
             .addInterceptor { chain ->
                 val request = chain.request().newBuilder()
                     .addHeader(
@@ -28,8 +31,12 @@ object NetworkModule {
                     )
                     .build()
                 chain.proceed(request)
-            }.addInterceptor(authInterceptor.value)
+            }
             .build()
+    }
+
+    fun addInterceptor(authInterceptor: AuthInterceptor) {
+        okHttpClientBuilder.addInterceptor(authInterceptor)
     }
 
     @Provides
