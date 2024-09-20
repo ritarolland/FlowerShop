@@ -9,6 +9,7 @@ import com.example.prac1.domain.repository.FlowersRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 class DetailsViewModel@Inject constructor(
@@ -29,7 +30,7 @@ class DetailsViewModel@Inject constructor(
     }
 
     fun addItemToCart(item: Flower) {
-        val cartItem = CartItem(item.id, 4)
+        val cartItem = CartItem(UUID.randomUUID().toString(), item.id, 2)
         cartRepository.addItemToCart(cartItem)
     }
 }

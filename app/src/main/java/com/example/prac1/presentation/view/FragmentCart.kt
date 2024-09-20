@@ -42,15 +42,16 @@ class FragmentCart : Fragment() {
 
         cartViewModel = ViewModelProvider(this, viewModelFactory)[CartViewModel::class.java]
         cartAdapter = CartAdapter { v -> cartViewModel.getItemById(v) }
-        binding.recyclerViewCart.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = cartAdapter
-        }
 
         lifecycleScope.launch {
             cartViewModel.cartItems.collect { items ->
-                cartAdapter.submitList(items)
+                cartAdapter.flowerList = items
             }
+        }
+
+        binding.recyclerViewCart.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = cartAdapter
         }
     }
 

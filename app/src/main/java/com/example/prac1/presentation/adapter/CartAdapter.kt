@@ -1,21 +1,37 @@
 package com.example.prac1.presentation.adapter
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.prac1.databinding.CartItemBinding
-import com.example.prac1.databinding.FlowerItemBinding
 import com.example.prac1.domain.model.CartItem
 import com.example.prac1.domain.model.Flower
 
 class CartAdapter(private val getFlowerById: (String) -> Flower?) : RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
 
-    private var flowerList: List<CartItem> = listOf()
+    var flowerList: List<CartItem>
+        get() = differ.currentList
+        set(value) {
+            differ.submitList(value)
+        }
 
-    fun submitList(newItems: List<CartItem>) {
-        flowerList = newItems
+    private val diffCallback = object : DiffUtil.ItemCallback<CartItem>() {
+        override fun areItemsTheSame(oldItem: CartItem, newItem: CartItem): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(
+            oldItem: CartItem,
+            newItem: CartItem
+        ): Boolean {
+            return oldItem == newItem
+        }
+
     }
+
+    private val differ = AsyncListDiffer(this, diffCallback)
 
     class CartViewHolder(private val binding: CartItemBinding, private val getFlowerById: (String) -> Flower?) :
         RecyclerView.ViewHolder(binding.root) {

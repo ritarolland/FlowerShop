@@ -1,4 +1,7 @@
 package com.example.prac1.data.model
 
-class CartItemDataModel {
-}
+data class CartItemDataModel(
+    val id: String,
+    val flower_id: String,
+    val quantity: Int
+)

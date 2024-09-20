@@ -2,7 +2,16 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/fragmentCatalog">
+    app:startDestination="@id/fragmentAuth">
+
+    <fragment
+        android:id="@+id/fragmentAuth"
+        android:name="com.example.prac1.presentation.view.FragmentAuth"
+        tools:layout="@layout/fragment_auth" >
+        <action
+            android:id="@+id/action_auth_to_catalog"
+            app:destination="@id/fragmentCatalog" />
+    </fragment>
 
     <fragment
         android:id="@+id/fragmentCatalog"

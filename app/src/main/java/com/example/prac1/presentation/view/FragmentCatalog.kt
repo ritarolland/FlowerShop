@@ -1,6 +1,7 @@
 package com.example.prac1.presentation.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.prac1.R
@@ -18,6 +20,8 @@ import com.example.prac1.presentation.interfaces.ItemClickInterface
 import com.example.prac1.presentation.viewmodel.CatalogViewModel
 import kotlinx.coroutines.launch
 import com.example.prac1.app.MyApplication
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 
@@ -46,16 +50,18 @@ class FragmentCatalog : Fragment(), ItemClickInterface {
         catalogViewModel = ViewModelProvider(this, viewModelFactory)[CatalogViewModel::class.java]
 
         catalogAdapter = CatalogAdapter { v -> onItemClicked(v) }
+
+        lifecycleScope.launch {
+            catalogViewModel.catalogItems.collect { items ->
+                catalogAdapter.flowerList = items
+            }
+        }
+
         binding.recyclerViewCatalog.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = catalogAdapter
         }
 
-        lifecycleScope.launch {
-            catalogViewModel.catalogItems.collect { items ->
-                catalogAdapter.submitList(items)
-            }
-        }
     }
 
     override fun onDestroyView() {

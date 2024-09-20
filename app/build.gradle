@@ -40,14 +40,17 @@ android {
 }
 
 dependencies {
+    //
+
     //Retrofit
     implementation(libs.retrofit)
-    // Retrofit with Scalar Converter
-    implementation(libs.converter.scalars)
+    // Retrofit with Gson Converter
+    implementation libs.converter.gson
+    implementation(libs.okhttp)
 
     //Room
     implementation libs.androidx.room.runtime
-    annotationProcessor libs.androidx.room.compiler
+    ksp libs.androidx.room.compiler
     ksp libs.androidx.room.room.compiler
 
     //Dagger 2
