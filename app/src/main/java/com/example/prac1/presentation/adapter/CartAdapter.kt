@@ -14,24 +14,22 @@ class CartAdapter(private val getFlowerById: (String) -> Flower?) : RecyclerView
     var flowerList: List<CartItem>
         get() = differ.currentList
         set(value) {
-            differ.submitList(value)
+            differ.submitList(value.toList())
         }
 
     private val diffCallback = object : DiffUtil.ItemCallback<CartItem>() {
         override fun areItemsTheSame(oldItem: CartItem, newItem: CartItem): Boolean {
             return oldItem.id == newItem.id
         }
-
         override fun areContentsTheSame(
             oldItem: CartItem,
             newItem: CartItem
         ): Boolean {
             return oldItem == newItem
         }
-
     }
 
-    private val differ = AsyncListDiffer(this, diffCallback)
+    val differ = AsyncListDiffer(this, diffCallback)
 
     class CartViewHolder(private val binding: CartItemBinding, private val getFlowerById: (String) -> Flower?) :
         RecyclerView.ViewHolder(binding.root) {

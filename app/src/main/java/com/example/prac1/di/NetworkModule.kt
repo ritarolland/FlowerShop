@@ -1,8 +1,5 @@
 package com.example.prac1.di
 
-import com.example.prac1.data.auth.TokenProviderImpl
-import com.example.prac1.domain.auth.TokenProvider
-import com.example.prac1.domain.repository.TokenRepository
 import com.example.prac1.network.api.FlowerApi
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -53,14 +50,5 @@ object NetworkModule {
     @Singleton
     fun provideGson(): Gson {
         return GsonBuilder().create()
-    }
-
-    @Provides
-    @Singleton
-    fun provideTokenProvider(
-        api: FlowerApi,
-        tokenRepository: TokenRepository
-    ): TokenProvider {
-        return TokenProviderImpl(api, tokenRepository)
     }
 }

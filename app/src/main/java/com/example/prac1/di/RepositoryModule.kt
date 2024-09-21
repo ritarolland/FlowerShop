@@ -4,7 +4,6 @@ import com.example.prac1.data.repository.AuthRepositoryImpl
 import com.example.prac1.data.repository.CartRepositoryImpl
 import com.example.prac1.data.repository.FlowersRepositoryImpl
 import com.example.prac1.data.repository.TokenRepositoryImpl
-import com.example.prac1.domain.auth.TokenProvider
 import com.example.prac1.domain.repository.AuthRepository
 import com.example.prac1.domain.repository.CartRepository
 import com.example.prac1.domain.repository.FlowersRepository
@@ -25,8 +24,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideCartRepository(api: FlowerApi, tokenProvider: TokenProvider): CartRepository {
-        return CartRepositoryImpl(api, tokenProvider)
+    fun provideCartRepository(api: FlowerApi, tokenRepository: TokenRepository): CartRepository {
+        return CartRepositoryImpl(api, tokenRepository)
     }
 
     @Provides

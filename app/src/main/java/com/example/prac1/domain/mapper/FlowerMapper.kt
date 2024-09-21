@@ -12,4 +12,12 @@ object FlowerMapper {
             price = dataModel.price,
         )
     }
+    fun mapToDataModel(dataModel: FlowerDataModel): FlowerDataModel {
+        return FlowerDataModel(
+            id = dataModel.id,
+            name = dataModel.name,
+            description = dataModel.description,
+            price = dataModel.price,
+        )
+    }
 }

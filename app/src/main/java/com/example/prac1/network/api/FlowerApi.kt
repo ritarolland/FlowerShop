@@ -32,7 +32,7 @@ interface FlowerApi {
     suspend fun addCartItem(
         @Header("Authorization") token: String,
         @Body cartItemDataModel: CartItemDataModel
-    ): Response<Any>
+    ): Response<Unit>
 
     @POST("/auth/v1/token?grant_type=password")
     @Headers("Content-Type: application/json")

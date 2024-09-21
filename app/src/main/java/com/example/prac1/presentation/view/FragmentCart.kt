@@ -1,5 +1,6 @@
 package com.example.prac1.presentation.view
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,8 @@ import com.example.prac1.app.MyApplication
 import com.example.prac1.databinding.FragmentCartBinding
 import com.example.prac1.presentation.adapter.CartAdapter
 import com.example.prac1.presentation.viewmodel.CartViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,6 +35,7 @@ class FragmentCart : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.buttonBack.setOnClickListener {
@@ -41,12 +45,19 @@ class FragmentCart : Fragment() {
         (requireActivity().application as MyApplication).appComponent.inject(this)
 
         cartViewModel = ViewModelProvider(this, viewModelFactory)[CartViewModel::class.java]
-        cartAdapter = CartAdapter { v -> cartViewModel.getItemById(v) }
+        cartAdapter = CartAdapter { flowerId ->
+            cartViewModel.getItemById(flowerId)
+        }
 
         lifecycleScope.launch {
             cartViewModel.cartItems.collect { items ->
                 cartAdapter.flowerList = items
             }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            cartViewModel.catalogItems.onEach {
+                cartAdapter.notifyDataSetChanged()
+            }.launchIn(this)
         }
 
         binding.recyclerViewCart.apply {

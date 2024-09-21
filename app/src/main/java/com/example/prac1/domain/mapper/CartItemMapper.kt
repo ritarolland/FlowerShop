@@ -11,4 +11,11 @@ object CartItemMapper {
             quantity = dataModel.quantity
         )
     }
+    fun mapToDataModel(domain: CartItem): CartItemDataModel {
+        return CartItemDataModel(
+            id = domain.id,
+            flower_id = domain.flowerId,
+            quantity = domain.quantity
+        )
+    }
 }

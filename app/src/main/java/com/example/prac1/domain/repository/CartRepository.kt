@@ -6,6 +6,6 @@ import kotlinx.coroutines.flow.Flow
 interface CartRepository {
     fun getCartItems(): Flow<List<CartItem>>
     fun addItemToCart(cartItem: CartItem)
-    fun removeItemFromCart(cartItem: CartItem)
-    fun clearCart()
+    /*fun removeItemFromCart(cartItem: CartItem)
+    fun clearCart()*/
 }

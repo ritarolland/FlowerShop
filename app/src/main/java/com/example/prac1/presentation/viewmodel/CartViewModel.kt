@@ -1,5 +1,6 @@
 package com.example.prac1.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.prac1.domain.model.CartItem
@@ -8,6 +9,7 @@ import com.example.prac1.domain.repository.CartRepository
 import com.example.prac1.domain.repository.FlowersRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,6 +21,7 @@ class CartViewModel@Inject constructor(
     val cartItems: StateFlow<List<CartItem>> = _cartItems
 
     private val _catalogItems = MutableStateFlow<List<Flower>>(emptyList())
+    val catalogItems = _catalogItems.asStateFlow()
 
     init {
         loadCatalogItems()
