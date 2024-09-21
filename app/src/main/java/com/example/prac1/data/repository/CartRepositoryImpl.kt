@@ -2,6 +2,7 @@ package com.example.prac1.data.repository
 
 import android.util.Log
 import com.example.prac1.data.model.CartItemDataModel
+import com.example.prac1.domain.auth.TokenProvider
 import com.example.prac1.domain.mapper.CartItemMapper.mapToDomain
 import com.example.prac1.domain.model.CartItem
 import com.example.prac1.domain.repository.CartRepository
@@ -13,7 +14,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class CartRepositoryImpl@Inject constructor(private val api: FlowerApi) : CartRepository {
+class CartRepositoryImpl @Inject constructor(
+    private val api: FlowerApi,
+    private val tokenProvider: TokenProvider
+) : CartRepository {
     private val _cartItems = MutableStateFlow<List<CartItem>>(emptyList())
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
@@ -21,20 +25,22 @@ class CartRepositoryImpl@Inject constructor(private val api: FlowerApi) : CartRe
         loadCartItems()
     }
 
+
     private fun loadCartItems() {
         ioScope.launch {
             try {
-                val response = api.getCartItems()
+                var response = api.getCartItems("Bearer ${tokenProvider.getToken()}")
+                if (response.code() == 401) {
+                    tokenProvider.refreshToken()
+                    response = api.getCartItems("Bearer ${tokenProvider.getToken()}")
+                }
                 if (response.isSuccessful) {
                     val cartItems = response.body()?.map { mapToDomain(it) } ?: emptyList()
-                    Log.d("VERONIKA", cartItems.toString())
                     _cartItems.value = cartItems
                 } else {
-                    Log.d("VERONIKA", "response is not successful")
                     _cartItems.value = emptyList()
                 }
             } catch (e: Exception) {
-                Log.d("VERONIKA", "exception")
                 _cartItems.value = emptyList()
             }
         }
@@ -53,13 +59,13 @@ class CartRepositoryImpl@Inject constructor(private val api: FlowerApi) : CartRe
                     quantity = cartItem.quantity
                 )
 
-                val response = api.addCartItem(cartItemDataModel)
-
+                var response = api.addCartItem("Bearer ${tokenProvider.getToken()}", cartItemDataModel)
+                if (response.code() == 401) {
+                    tokenProvider.refreshToken()
+                    response = api.addCartItem("Bearer ${tokenProvider.getToken()}", cartItemDataModel)
+                }
                 if (response.isSuccessful) {
-                    // Обновляем локальное состояние, чтобы отразить добавление элемента
-                    //_cartItems.value += cartItem
                     loadCartItems()
-                    Log.d("TAG", "Item added successfully")
                 } else {
                     Log.d("TAG", "Failed to add item: ${response.errorBody()?.string()}")
                 }

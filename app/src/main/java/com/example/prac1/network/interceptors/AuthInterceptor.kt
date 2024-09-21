@@ -1,13 +1,10 @@
 package com.example.prac1.network.interceptors
 
 import com.example.prac1.domain.auth.TokenProvider
-import com.example.prac1.domain.auth.TokenRetriever
-import com.example.prac1.domain.repository.AuthRepository
 import com.example.prac1.network.annotations.RequiresAuthorization
 import okhttp3.Interceptor
 import okhttp3.Response
 import retrofit2.Invocation
-import javax.inject.Provider
 
 class AuthInterceptor(
     private val tokenProvider: TokenProvider

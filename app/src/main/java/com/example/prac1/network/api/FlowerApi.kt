@@ -10,6 +10,7 @@ import com.example.prac1.network.responses.RefreshTokenResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
 
@@ -19,16 +20,19 @@ interface FlowerApi {
     suspend fun getFlowersCatalog(): Response<List<FlowerDataModel>>
 
     @GET("/rest/v1/cart_items")
-    @RequiresAuthorization
-    suspend fun getCartItems(): Response<List<CartItemDataModel>>
+    suspend fun getCartItems(
+        @Header("Authorization") token: String
+    ): Response<List<CartItemDataModel>>
 
     @POST("/rest/v1/cart_items")
     @Headers(
         "Content-Type: application/json",
         "Prefer: return=minimal"
     )
-    @RequiresAuthorization
-    suspend fun addCartItem(@Body cartItemDataModel: CartItemDataModel): Response<Any>
+    suspend fun addCartItem(
+        @Header("Authorization") token: String,
+        @Body cartItemDataModel: CartItemDataModel
+    ): Response<Any>
 
     @POST("/auth/v1/token?grant_type=password")
     @Headers("Content-Type: application/json")

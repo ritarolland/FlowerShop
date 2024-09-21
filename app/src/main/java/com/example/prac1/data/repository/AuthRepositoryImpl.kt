@@ -19,16 +19,15 @@ class AuthRepositoryImpl(
                 val accessToken = response.body()?.access_token ?: ""
                 val refreshToken = response.body()?.refresh_token ?: ""
 
+                Log.d("VERON","accessToken: $accessToken, refreshToken: $refreshToken")
                 tokenRepository.setToken(accessToken)
                 tokenRepository.setRefreshToken(refreshToken)
 
                 true
             } else {
-                Log.d("QWERTY", "response is not successful")
                 false
             }
         } catch (e: Exception) {
-            Log.d("QWERTY", "exception ${e.message}")
             false
         }
     }

@@ -4,7 +4,6 @@ import com.example.prac1.data.auth.TokenProviderImpl
 import com.example.prac1.domain.auth.TokenProvider
 import com.example.prac1.domain.repository.TokenRepository
 import com.example.prac1.network.api.FlowerApi
-import com.example.prac1.network.interceptors.AuthInterceptor
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -17,12 +16,10 @@ import javax.inject.Singleton
 @Module
 object NetworkModule {
 
-    private val okHttpClientBuilder = OkHttpClient.Builder()
-
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
-        return okHttpClientBuilder
+        return OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val request = chain.request().newBuilder()
                     .addHeader(
@@ -33,10 +30,6 @@ object NetworkModule {
                 chain.proceed(request)
             }
             .build()
-    }
-
-    fun addInterceptor(authInterceptor: AuthInterceptor) {
-        okHttpClientBuilder.addInterceptor(authInterceptor)
     }
 
     @Provides
@@ -69,25 +62,5 @@ object NetworkModule {
         tokenRepository: TokenRepository
     ): TokenProvider {
         return TokenProviderImpl(api, tokenRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideAuthInterceptor(tokenProvider: TokenProvider): AuthInterceptor {
-        return AuthInterceptor(tokenProvider)
-    }
-
-    @Provides
-    @Singleton
-    fun provideLazyAuthInterceptor(authInterceptor: AuthInterceptor): Lazy<AuthInterceptor> {
-        return lazy { authInterceptor }
-    }
-
-    @Provides
-    @Singleton
-    fun provideLazyTokenProvider(
-        tokenProvider: TokenProvider
-    ): Lazy<TokenProvider> {
-        return lazy { tokenProvider }
     }
 }
