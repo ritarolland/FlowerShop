@@ -27,25 +27,25 @@ class CartRepositoryImpl @Inject constructor(
         loadCartItems()
     }
 
-    private fun getToken(): String {
+    private fun getToken(): String? {
         return tokenRepository.getToken()
     }
 
-    private fun refreshToken(): Boolean {
+    private suspend fun refreshToken(): Boolean {
         return try {
-            val refreshToken = tokenRepository.getRefreshToken()
+            val refreshToken: String = tokenRepository.getRefreshToken()!! //если нет refresh_token выбросим исключение
             val response = runBlocking {
                 api.refreshToken(RefreshTokenRequest(refreshToken))
             }
-
             if (response.isSuccessful) {
-                val newAccessToken = response.body()?.access_token ?: ""
-                val newRefreshToken = response.body()?.refresh_token ?: ""
-                tokenRepository.setToken(newAccessToken)
+                val newAccessToken: String = response.body()?.access_token!! //если в теле не нашли токены выбросим исключение
+                val newExpiresIn: Long = response.body()?.expires_in!!
+                val newRefreshToken: String = response.body()?.refresh_token!!
+                tokenRepository.setToken(newAccessToken, newExpiresIn)
                 tokenRepository.setRefreshToken(newRefreshToken)
                 true
             } else {
-                false
+                false //запрос неуспешен
             }
         } catch (e: Exception) {
             false

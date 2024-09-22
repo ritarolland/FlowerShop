@@ -13,10 +13,20 @@ class AuthViewModel@Inject constructor(private val authRepository: AuthRepositor
     private val _signInState = MutableStateFlow<AuthResult<Boolean>>(AuthResult.Loading)
     val signInState = _signInState.asStateFlow()
 
+    private val _isAuthorized = MutableStateFlow(false)
+    val isAuthorized = _isAuthorized.asStateFlow()
+
     fun signIn(email: String, password: String) {
         viewModelScope.launch {
             val success = authRepository.signIn(email, password)
             _signInState.value = AuthResult.Success(success)
+        }
+    }
+
+    fun checkAuthorization(){
+        viewModelScope.launch {
+            val authorized =  authRepository.isUserAuthorized()
+            _isAuthorized.value = authorized
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.example.prac1.di
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.example.prac1.data.repository.AuthRepositoryImpl
 import com.example.prac1.data.repository.CartRepositoryImpl
 import com.example.prac1.data.repository.FlowersRepositoryImpl
@@ -18,6 +20,12 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun provideSharedPreferences(context: Context): SharedPreferences {
+        return context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    }
+
+    @Provides
+    @Singleton
     fun provideFlowersRepository(api: FlowerApi): FlowersRepository {
         return FlowersRepositoryImpl(api)
     }
@@ -30,8 +38,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideTokenRepository(): TokenRepository {
-        return TokenRepositoryImpl()
+    fun provideTokenRepository(sharedPreferences: SharedPreferences): TokenRepository {
+        return TokenRepositoryImpl(sharedPreferences)
     }
 
     @Provides

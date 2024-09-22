@@ -1,11 +1,11 @@
 package com.example.prac1.presentation.view
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -13,8 +13,6 @@ import com.example.prac1.R
 import com.example.prac1.app.MyApplication
 import com.example.prac1.databinding.FragmentAuthBinding
 import com.example.prac1.presentation.viewmodel.AuthViewModel
-import com.example.prac1.presentation.viewmodel.CartViewModel
-import com.example.prac1.presentation.viewmodel.ViewModelFactory
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -41,11 +39,16 @@ class FragmentAuth : Fragment() {
 
         authViewModel = ViewModelProvider(this, viewModelFactory)[AuthViewModel::class.java]
 
-        binding.enter.setOnClickListener { v -> onClickSignIn(v) }
-        binding.register.setOnClickListener { v -> onClickSignUpNow(v) }
+        authViewModel.checkAuthorization()
+        if (authViewModel.isAuthorized.value) {
+            findNavController().navigate(R.id.action_auth_to_catalog)
+        } //пока выполняется показать индикатор загрузки
+
+        binding.enter.setOnClickListener { _ -> onClickSignIn() }
+        binding.register.setOnClickListener { _ -> onClickSignUpNow() }
     }
 
-    private fun onClickSignIn(view: View) {
+    private fun onClickSignIn() {
         val email = binding.emailEdittext.text.toString()
         val password = binding.passwordEdittext.text.toString()
 
@@ -55,17 +58,27 @@ class FragmentAuth : Fragment() {
                 authViewModel.signInState.collect { result ->
                     when (result) {
                         is AuthResult.Loading -> {
-                            // Показать индикатор загрузки, если нужно
+                            // Показать индикатор загрузки
                         }
+
                         is AuthResult.Success -> {
                             if (result.data) {
                                 findNavController().navigate(R.id.action_auth_to_catalog)
                             } else {
-                                Toast.makeText(requireContext(), "Sign in failed", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Sign in failed",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
+
                         is AuthResult.Error -> {
-                            Toast.makeText(requireContext(), "Sign in failed: ${result.exception.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                requireContext(),
+                                "Sign in failed: ${result.exception.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 }
@@ -76,7 +89,7 @@ class FragmentAuth : Fragment() {
     }
 
     // Обработка клика по ссылке "Зарегистрироваться"
-    fun onClickSignUpNow(view: View) {
+    private fun onClickSignUpNow() {
         // Логика для навигации на экран регистрации
     }
 

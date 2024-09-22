@@ -4,7 +4,7 @@ import com.example.prac1.data.model.UserDataModel
 
 data class LoginResponse(
     val access_token: String,
-    val expires_in: Int,
+    val expires_in: Long,
     val refresh_token: String,
     val user: UserDataModel
 )

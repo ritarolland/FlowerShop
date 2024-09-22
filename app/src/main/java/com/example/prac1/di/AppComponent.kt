@@ -1,10 +1,12 @@
 package com.example.prac1.di
 
+import android.content.Context
 import com.example.prac1.presentation.view.FragmentAuth
 import com.example.prac1.presentation.view.FragmentCart
 import com.example.prac1.presentation.view.FragmentCatalog
 import com.example.prac1.presentation.view.FragmentDetails
 import com.example.prac1.presentation.view.MainActivity
+import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
 
@@ -16,4 +18,9 @@ interface AppComponent {
     fun inject(fragment: FragmentDetails)
     fun inject(activity: FragmentCart)
     fun inject(fragmentAuth: FragmentAuth)
+
+    @Component.Factory
+    interface AppComponentFactory {
+        fun create(@BindsInstance context: Context): AppComponent
+    }
 }
