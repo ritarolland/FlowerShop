@@ -8,6 +8,7 @@ object CartItemMapper {
         return CartItem(
             id = dataModel.id,
             flowerId = dataModel.flower_id,
+            userId = dataModel.user_id,
             quantity = dataModel.quantity
         )
     }
@@ -15,7 +16,8 @@ object CartItemMapper {
         return CartItemDataModel(
             id = domain.id,
             flower_id = domain.flowerId,
-            quantity = domain.quantity
+            quantity = domain.quantity,
+            user_id = domain.userId
         )
     }
 }

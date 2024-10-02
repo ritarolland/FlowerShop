@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/fragmentCatalog"
+        android:icon="@drawable/home"
+        android:title="@string/catalog" />
+    <item
+        android:id="@+id/fragmentCart"
+        android:icon="@drawable/shopping_cart"
+        android:title="@string/cart" />
+    <item
+        android:id="@+id/fragmentProfile"
+        android:icon="@drawable/acc"
+        android:title="@string/profile" />
+
+</menu>

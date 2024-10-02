@@ -2,11 +2,11 @@ package com.example.prac1.network.api
 
 import com.example.prac1.data.model.CartItemDataModel
 import com.example.prac1.data.model.FlowerDataModel
-import com.example.prac1.network.annotations.RequiresAuthorization
 import com.example.prac1.network.requests.LoginRequest
 import com.example.prac1.network.requests.RefreshTokenRequest
 import com.example.prac1.network.responses.LoginResponse
 import com.example.prac1.network.responses.RefreshTokenResponse
+import com.example.prac1.network.responses.UserIdResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -41,5 +41,10 @@ interface FlowerApi {
     @POST("/auth/v1/token?grant_type=refresh_token")
     @Headers("Content-Type: application/json")
     suspend fun refreshToken(@Body refreshTokenRequest: RefreshTokenRequest): Response<RefreshTokenResponse>
+
+    @GET("/auth/v1/user")
+    suspend fun getUser(
+        @Header("Authorization") token: String
+    ): Response<UserIdResponse>
 
 }

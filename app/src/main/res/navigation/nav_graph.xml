@@ -38,4 +38,9 @@
         android:id="@+id/fragmentCart"
         android:name="com.example.prac1.presentation.view.FragmentCart"
         tools:layout="@layout/fragment_cart" />
+
+    <fragment
+        android:id="@+id/fragmentProfile"
+        android:name="com.example.prac1.presentation.view.FragmentProfile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

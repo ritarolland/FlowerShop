@@ -6,10 +6,12 @@ import com.example.prac1.data.repository.AuthRepositoryImpl
 import com.example.prac1.data.repository.CartRepositoryImpl
 import com.example.prac1.data.repository.FlowersRepositoryImpl
 import com.example.prac1.data.repository.TokenRepositoryImpl
+import com.example.prac1.data.repository.UserUidRepositoryImpl
 import com.example.prac1.domain.repository.AuthRepository
 import com.example.prac1.domain.repository.CartRepository
 import com.example.prac1.domain.repository.FlowersRepository
 import com.example.prac1.domain.repository.TokenRepository
+import com.example.prac1.domain.repository.UserUidRepository
 import com.example.prac1.network.api.FlowerApi
 import dagger.Module
 import dagger.Provides
@@ -32,8 +34,25 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideCartRepository(api: FlowerApi, tokenRepository: TokenRepository): CartRepository {
-        return CartRepositoryImpl(api, tokenRepository)
+    fun provideUserUidRepository(
+        sharedPreferences: SharedPreferences,
+        tokenRepository: TokenRepository,
+        api: FlowerApi
+    ): UserUidRepository {
+        return UserUidRepositoryImpl(
+            sharedPreferences,
+            tokenRepository, api
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideCartRepository(
+        api: FlowerApi,
+        tokenRepository: TokenRepository,
+        userUidRepository: UserUidRepository
+    ): CartRepository {
+        return CartRepositoryImpl(api, tokenRepository, userUidRepository)
     }
 
     @Provides
