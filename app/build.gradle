@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.compose.compiler)
     id 'androidx.navigation.safeargs.kotlin'
     id 'kotlin-kapt'
     id 'com.google.devtools.ksp'
@@ -27,20 +28,47 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "11"
     }
 
     viewBinding {
         enabled = true
     }
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.15"
+    }
+
+
+
 }
 
+
 dependencies {
-    //
+    //Compose
+    implementation platform(libs.androidx.compose.bom)
+    androidTestImplementation platform(libs.androidx.compose.bom)
+    // Material Design 3
+    implementation libs.material3
+    // Android Studio Preview support
+    implementation libs.ui.tooling.preview
+    debugImplementation libs.ui.tooling
+    implementation libs.androidx.ui
+    implementation libs.androidx.compiler
+    // Integration with activities
+    implementation libs.androidx.activity.compose
+    // Integration with ViewModels
+    implementation libs.androidx.lifecycle.viewmodel.compose
+    //Navigation
+    implementation libs.androidx.navigation.compose
+
 
     //Retrofit
     implementation(libs.retrofit)
