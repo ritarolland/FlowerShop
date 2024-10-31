@@ -14,12 +14,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.prac1.R
 import com.example.prac1.databinding.FragmentCatalogBinding
-import com.example.prac1.domain.model.Flower
 import com.example.prac1.presentation.adapter.CatalogAdapter
 import com.example.prac1.presentation.interfaces.ItemClickInterface
-import com.example.prac1.presentation.viewmodel.CatalogViewModel
 import kotlinx.coroutines.launch
 import com.example.prac1.app.MyApplication
+import com.example.prac1.domain.model.Flower
+import com.example.prac1.presentation.viewmodel.CatalogViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject

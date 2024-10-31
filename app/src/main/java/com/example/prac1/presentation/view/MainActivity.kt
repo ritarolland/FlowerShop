@@ -1,42 +1,42 @@
 package com.example.prac1.presentation.view
 
 import android.os.Bundle
-import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.MaterialTheme
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
-import com.example.prac1.R
-import com.example.prac1.databinding.ActivityMainBinding
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.prac1.app.MyApplication
 import com.example.prac1.presentation.navigation.BottomNavigationBar
+import com.example.prac1.presentation.viewmodel.CartViewModel
+import com.example.prac1.presentation.viewmodel.CatalogViewModel
+import com.example.prac1.presentation.viewmodel.DetailsViewModel
+import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
 
-    /*private lateinit var binding: ActivityMainBinding
-    private lateinit var navController: NavController*/
+    private lateinit var navController: NavHostController
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var detailsViewModel: DetailsViewModel
+    private lateinit var cartViewModel: CartViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        (application as MyApplication).appComponent.inject(this)
+        detailsViewModel = ViewModelProvider(this, viewModelFactory)[DetailsViewModel::class]
+        cartViewModel = ViewModelProvider(this, viewModelFactory)[CartViewModel::class]
         setContent {
-            MaterialTheme{
-                BottomNavigationBar()
+            MaterialTheme {
+                val catalogViewModel = ViewModelProvider(
+                    this,
+                    viewModelFactory
+                )[CatalogViewModel::class.java]
+                navController = rememberNavController()
+                BottomNavigationBar(navController, catalogViewModel, detailsViewModel, cartViewModel)
             }
         }
-
-        /*binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navController = navHostFragment.navController
-        binding.bottomNavigationView.setupWithNavController(navController)
-
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination.id) {
-                R.id.fragmentAuth -> binding.bottomNavigationView.visibility = View.GONE
-                else -> binding.bottomNavigationView.visibility = View.VISIBLE
-            }
-        }*/
     }
 }

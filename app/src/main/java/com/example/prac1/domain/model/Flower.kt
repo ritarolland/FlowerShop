@@ -7,11 +7,13 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "flowers")
 data class Flower(
     @PrimaryKey(autoGenerate = true)
-    val id: String,
+    val id: String = "",
     @ColumnInfo(name = "name")
-    val name: String,
+    val name: String = "Loading...",
     @ColumnInfo(name = "description")
-    val description: String,
+    val description: String = "Description loading...",
     @ColumnInfo(name = "price")
-    val price: Double
+    val price: Double = 0.0,
+    @ColumnInfo(name = "image_url")
+    val imageUrl: String = ""
 )

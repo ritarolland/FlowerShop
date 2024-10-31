@@ -1,6 +1,5 @@
 package com.example.prac1.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.prac1.domain.model.CartItem
@@ -46,5 +45,9 @@ class CartViewModel@Inject constructor(
 
     fun getItemById(id: String): Flower? {
         return _catalogItems.value.find { it.id == id }
+    }
+
+    fun updateCartItemQuantity(itemId: String, newQuantity: Int) {
+        cartRepository.updateCartItemQuantity(itemId, newQuantity)
     }
 }

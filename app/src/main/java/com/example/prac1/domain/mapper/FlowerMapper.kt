@@ -10,14 +10,17 @@ object FlowerMapper {
             name = dataModel.name,
             description = dataModel.description ?: "No description",
             price = dataModel.price,
+            imageUrl = dataModel.image_url
         )
     }
-    fun mapToDataModel(dataModel: FlowerDataModel): FlowerDataModel {
+
+    fun mapToDataModel(domain: Flower): FlowerDataModel {
         return FlowerDataModel(
-            id = dataModel.id,
-            name = dataModel.name,
-            description = dataModel.description,
-            price = dataModel.price,
+            id = domain.id,
+            name = domain.name,
+            description = domain.description,
+            price = domain.price,
+            image_url = domain.imageUrl
         )
     }
 }

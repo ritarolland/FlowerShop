@@ -20,14 +20,14 @@ class DetailsViewModel @Inject constructor(
     private val userUidRepository: UserUidRepository
 ) : ViewModel() {
 
-    private val _selectedItem = MutableStateFlow<Flower?>(null)
+    private val _selectedItem = MutableStateFlow(Flower())
     val selectedItem = _selectedItem.asStateFlow()
 
     fun loadItemById(itemId: String) {
         viewModelScope.launch {
             val items = catalogRepository.getCatalogItems()
             items.collect { itemList ->
-                _selectedItem.value = itemList.find { it.id == itemId }
+                _selectedItem.value = itemList.find { it.id == itemId } ?: Flower()
             }
         }
     }
@@ -39,7 +39,12 @@ class DetailsViewModel @Inject constructor(
                 Log.d("DETAIL", "uid null")
                 return@launch
             }
-            val cartItem = CartItem(id = UUID.randomUUID().toString(), flowerId = item.id, userId = uid, quantity = 2)
+            val cartItem = CartItem(
+                id = UUID.randomUUID().toString(),
+                flowerId = item.id,
+                userId = uid,
+                quantity = 2
+            )
             cartRepository.addItemToCart(cartItem)
         }
     }

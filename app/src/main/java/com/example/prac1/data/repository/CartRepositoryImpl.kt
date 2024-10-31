@@ -1,6 +1,5 @@
 package com.example.prac1.data.repository
 
-import android.util.Log
 import com.example.prac1.domain.mapper.CartItemMapper
 import com.example.prac1.domain.mapper.CartItemMapper.mapToDomain
 import com.example.prac1.domain.model.CartItem
@@ -9,6 +8,7 @@ import com.example.prac1.domain.repository.TokenRepository
 import com.example.prac1.domain.repository.UserUidRepository
 import com.example.prac1.network.api.FlowerApi
 import com.example.prac1.network.requests.RefreshTokenRequest
+import com.example.prac1.network.requests.UpdateCartItemRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -67,21 +67,18 @@ class CartRepositoryImpl @Inject constructor(
                 }
                 if (response.isSuccessful) {
 
-                    val currentUserId: String? = userUidRepository.getUserUid() // вот здесб выбрасывается исключение
-                    Log.d("UID", "issuccess")
-
+                    val currentUserId: String? = userUidRepository.getUserUid()
                     val cartItems = response.body()
                         ?.filter { it.user_id == currentUserId }
-                        ?.map { mapToDomain(it) } ?: emptyList()
+                        ?.map { mapToDomain(it) }
+                        ?.sortedBy { it.id } ?: emptyList()
                     _cartItems.value = cartItems
                 } else {
                     _cartItems.value = emptyList()
-                    Log.d("CART", "server problem")
                     //вывести что пользователь не авторизован
                 }
             } catch (e: Exception) {
                 _cartItems.value = emptyList()
-                Log.d("CART", e.message.toString())
                 //вывести что не удается получить доступ к серверу
             }
         }
@@ -95,25 +92,41 @@ class CartRepositoryImpl @Inject constructor(
         ioScope.launch {
             val cartItemDataModel = CartItemMapper.mapToDataModel(cartItem)
             try {
-                Log.d("CART", "trying to add item")
                 var response = api.addCartItem("Bearer ${getToken()}", cartItemDataModel)
-                Log.d("CART", response.code().toString())
-                if (response.code() == 409) {
-                    Log.d("CART", "Conflict: ${response.errorBody()?.string()}")
-                }
                 if (response.code() == 401 || response.code() == 403) {
                     refreshToken()
                     response = api.addCartItem("Bearer ${getToken()}", cartItemDataModel)
                 }
                 if (response.isSuccessful) {
                     loadCartItems()
-                    Log.d("ADAPTER", "cartRepo: $_cartItems")
                 } else {
                     //вывести что пользователь не авторизован
                 }
 
             } catch (e: Exception) {
-                Log.d("CART", e.message.toString())
+                //вывести что не удается получить доступ к серверу
+            }
+        }
+    }
+
+    override fun updateCartItemQuantity(itemId: String, newQuantity: Int) {
+        ioScope.launch {
+            try {
+                var response = api.updateCartItemQuantity(
+                    itemId = "eq.$itemId", token = "Bearer ${getToken()}",
+                    updateCartItemRequest = UpdateCartItemRequest(newQuantity.toLong())
+                )
+                if (response.code() == 401 || response.code() == 403) {
+                    refreshToken()
+                    response = api.updateCartItemQuantity(itemId = "eq.$itemId", token = "Bearer ${getToken()}", updateCartItemRequest = UpdateCartItemRequest(newQuantity.toLong()))
+                }
+                if (response.isSuccessful) {
+                    loadCartItems()
+                } else {
+                    //вывести что пользователь не авторизован
+                }
+
+            } catch (e: Exception) {
                 //вывести что не удается получить доступ к серверу
             }
         }

@@ -52,6 +52,9 @@ android {
 
 
 dependencies {
+    //Glide
+    implementation libs.glide
+    ksp libs.ksp
     //Compose
     implementation platform(libs.androidx.compose.bom)
     androidTestImplementation platform(libs.androidx.compose.bom)
