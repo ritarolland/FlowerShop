@@ -8,7 +8,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.prac1.app.MyApplication
-import com.example.prac1.presentation.navigation.BottomNavigationBar
+import com.example.prac1.presentation.navigation.MainScreen
+import com.example.prac1.presentation.viewmodel.AuthViewModel
 import com.example.prac1.presentation.viewmodel.CartViewModel
 import com.example.prac1.presentation.viewmodel.CatalogViewModel
 import com.example.prac1.presentation.viewmodel.DetailsViewModel
@@ -22,20 +23,27 @@ class MainActivity : ComponentActivity() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var detailsViewModel: DetailsViewModel
     private lateinit var cartViewModel: CartViewModel
+    private lateinit var catalogViewModel: CatalogViewModel
+    private lateinit var authViewModel: AuthViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (application as MyApplication).appComponent.inject(this)
         detailsViewModel = ViewModelProvider(this, viewModelFactory)[DetailsViewModel::class]
         cartViewModel = ViewModelProvider(this, viewModelFactory)[CartViewModel::class]
+        catalogViewModel = ViewModelProvider(this, viewModelFactory)[CatalogViewModel::class]
+        authViewModel = ViewModelProvider(this, viewModelFactory) [AuthViewModel::class]
         setContent {
             MaterialTheme {
-                val catalogViewModel = ViewModelProvider(
-                    this,
-                    viewModelFactory
-                )[CatalogViewModel::class.java]
                 navController = rememberNavController()
-                BottomNavigationBar(navController, catalogViewModel, detailsViewModel, cartViewModel)
+                MainScreen(
+                    navController = navController,
+                    authViewModel = authViewModel,
+                    catalogViewModel = catalogViewModel,
+                    detailsViewModel = detailsViewModel,
+                    cartViewModel = cartViewModel
+                )
             }
         }
     }

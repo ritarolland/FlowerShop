@@ -40,7 +40,7 @@ class FragmentAuth : Fragment() {
         authViewModel = ViewModelProvider(this, viewModelFactory)[AuthViewModel::class.java]
 
         authViewModel.checkAuthorization()
-        if (authViewModel.isAuthorized.value) {
+        if (authViewModel.isAuthorized.value == true) {
             findNavController().navigate(R.id.action_auth_to_catalog)
         } //пока выполняется показать индикатор загрузки
 

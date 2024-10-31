@@ -5,6 +5,7 @@ import com.example.prac1.presentation.view.FragmentAuth
 import com.example.prac1.presentation.view.FragmentCart
 import com.example.prac1.presentation.view.FragmentCatalog
 import com.example.prac1.presentation.view.FragmentDetails
+
 import com.example.prac1.presentation.view.MainActivity
 import dagger.BindsInstance
 import dagger.Component
