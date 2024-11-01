@@ -2,8 +2,66 @@ package com.example.prac1.data.repository
 
 import android.content.SharedPreferences
 import com.example.prac1.domain.repository.TokenRepository
+import com.example.prac1.network.api.FlowerApi
+import com.example.prac1.network.requests.RefreshTokenRequest
+import kotlinx.coroutines.runBlocking
+import retrofit2.Response
 
-class TokenRepositoryImpl(private val sharedPreferences: SharedPreferences) : TokenRepository {
+class TokenRepositoryImpl(
+    private val sharedPreferences: SharedPreferences,
+    private val api: FlowerApi
+) : TokenRepository {
+    override suspend fun refreshToken(): Boolean {
+        return try {
+            val refreshToken = getRefreshToken() ?: return false
+            val response = runBlocking {
+                api.refreshToken(RefreshTokenRequest(refreshToken))
+            }
+            if (response.isSuccessful) {
+                val newAccessToken = response.body()?.access_token ?: return false
+                val newExpiresIn = response.body()?.expires_in ?: return false
+                val newRefreshToken = response.body()?.refresh_token ?: return false
+                setToken(newAccessToken, newExpiresIn)
+                setRefreshToken(newRefreshToken)
+                true
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    private suspend fun <T> apiCallWithRetry(
+        call: suspend () -> Response<T>
+    ): Response<T> {
+        val response = call()
+        return if ((response.code() == 401 || response.code() == 403) && refreshToken()) {
+            call()
+        } else {
+            response
+        }
+    }
+
+    override suspend fun <T> executeApiCall(
+        apiCall: suspend () -> Response<T>,
+        onSuccess: (Response<T>) -> Unit,
+        onError: () -> Unit
+    ) {
+        try {
+            val response = apiCallWithRetry(apiCall)
+            if (response.isSuccessful) {
+                onSuccess(response)
+            } else {
+                onError()
+            }
+        } catch (e: Exception) {
+            onError()
+        }
+    }
+
+    override fun createAuthHeader(): String = "Bearer ${getToken()}"
+
 
     override fun getToken(): String? {
         return sharedPreferences.getString("access_token", null)

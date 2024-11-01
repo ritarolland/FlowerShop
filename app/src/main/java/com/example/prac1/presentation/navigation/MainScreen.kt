@@ -22,36 +22,34 @@ fun MainScreen(
 ) {
     val isAuthorized by authViewModel.isAuthorized.collectAsState()
 
-    // Показываем индикатор загрузки, пока статус авторизации не определён
     if (isAuthorized == null) {
-        CircularProgressIndicator() // Или любой другой индикатор загрузки
-        return
-    }
-
-    // Следим за изменением isAuthorized и перенаправляем на AuthScreen при выходе
-    LaunchedEffect(isAuthorized) {
-        if (isAuthorized == false) {
-            navController.navigate(Screens.Auth.route) {
-                popUpTo(0) { inclusive = true } // Удаляем все предыдущие экраны из стека
-            }
-        }
-    }
-
-    if (isAuthorized == true) {
-        Scaffold(
-            bottomBar = {
-                BottomNavigationBar(navController = navController)
-            }
-        ) { paddingValues ->
-            AppNavHost(
-                navController = navController,
-                paddingValues = paddingValues,
-                catalogViewModel = catalogViewModel,
-                detailsViewModel = detailsViewModel,
-                cartViewModel = cartViewModel
-            )
-        }
+        CircularProgressIndicator()
     } else {
-        AuthNavHost(navController = navController, authViewModel = authViewModel)
+        LaunchedEffect(isAuthorized) {
+            if (isAuthorized == false) {
+                navController.navigate(Screens.Auth.route) {
+                    popUpTo(0) { inclusive = true }
+                }
+            }
+        }
+
+        if (isAuthorized == true) {
+            Scaffold(
+                bottomBar = {
+                    BottomNavigationBar(navController = navController)
+                }
+            ) { paddingValues ->
+                AppNavHost(
+                    navController = navController,
+                    paddingValues = paddingValues,
+                    catalogViewModel = catalogViewModel,
+                    detailsViewModel = detailsViewModel,
+                    cartViewModel = cartViewModel
+                )
+            }
+        } else {
+            AuthNavHost(navController = navController, authViewModel = authViewModel)
+        }
     }
+
 }

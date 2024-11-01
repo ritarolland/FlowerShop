@@ -4,8 +4,6 @@ import com.example.prac1.domain.repository.AuthRepository
 import com.example.prac1.domain.repository.TokenRepository
 import com.example.prac1.network.api.FlowerApi
 import com.example.prac1.network.requests.LoginRequest
-import com.example.prac1.network.requests.RefreshTokenRequest
-import kotlinx.coroutines.runBlocking
 
 class AuthRepositoryImpl(
     private val api: FlowerApi,
@@ -30,30 +28,9 @@ class AuthRepositoryImpl(
         }
     }
 
-    private suspend fun refreshToken(): Boolean {
-        return try {
-            val refreshToken: String = tokenRepository.getRefreshToken()!! //если нет refresh_token выбросим исключение
-            val response = runBlocking {
-                api.refreshToken(RefreshTokenRequest(refreshToken))
-            }
-            if (response.isSuccessful) {
-                val newAccessToken: String = response.body()?.access_token!! //если в теле не нашли токены выбросим исключение
-                val newExpiresIn: Long = response.body()?.expires_in!!
-                val newRefreshToken: String = response.body()?.refresh_token!!
-                tokenRepository.setToken(newAccessToken, newExpiresIn)
-                tokenRepository.setRefreshToken(newRefreshToken)
-                true
-            } else {
-                false //запрос неуспешен
-            }
-        } catch (e: Exception) {
-            false
-        }
-    }
-
     override suspend fun isUserAuthorized(): Boolean{
         if (tokenRepository.isTokenExpired()) {
-            val successfullyRefreshed = refreshToken()
+            val successfullyRefreshed = tokenRepository.refreshToken()
             return successfullyRefreshed
         } else {
             return true

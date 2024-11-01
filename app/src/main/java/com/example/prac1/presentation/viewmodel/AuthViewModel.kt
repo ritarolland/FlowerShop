@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.example.prac1.presentation.view.AuthResult
 
-class AuthViewModel@Inject constructor(private val authRepository: AuthRepository) : ViewModel(){
+class AuthViewModel @Inject constructor(private val authRepository: AuthRepository) : ViewModel() {
     private val _signInState = MutableStateFlow<AuthResult<Boolean>>(AuthResult.Loading)
     val signInState = _signInState.asStateFlow()
 
@@ -17,20 +17,22 @@ class AuthViewModel@Inject constructor(private val authRepository: AuthRepositor
     val isAuthorized = _isAuthorized.asStateFlow()
 
     init {
-        checkAuthorization()
+        viewModelScope.launch {
+            checkAuthorization()
+        }
     }
 
     fun signIn(email: String, password: String) {
         viewModelScope.launch {
             val success = authRepository.signIn(email, password)
             _signInState.value = AuthResult.Success(success)
+            checkAuthorization()
         }
     }
 
-    fun checkAuthorization(){
-        viewModelScope.launch {
-            val authorized =  authRepository.isUserAuthorized()
-            _isAuthorized.value = authorized
-        }
+    private suspend fun checkAuthorization() {
+        val authorized = authRepository.isUserAuthorized()
+        _isAuthorized.value = authorized
     }
+
 }

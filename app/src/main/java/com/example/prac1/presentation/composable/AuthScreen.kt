@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -24,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.prac1.R
 import com.example.prac1.presentation.view.AuthResult
@@ -60,7 +58,7 @@ fun AuthScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = stringResource(R.string.dance_studio)
+                text = stringResource(R.string.flowery)
             )
             TextField(
                 value = email,
@@ -87,7 +85,7 @@ fun AuthScreen(
                 onClick = {
                     if (email.isNotEmpty() && password.isNotEmpty()) {
                         authViewModel.signIn(email = email, password = password)
-                        authViewModel.checkAuthorization()
+                        //authViewModel.checkAuthorization()
                     } else {
                         Toast.makeText(context, "Заполните все поля", Toast.LENGTH_SHORT).show()
                     }

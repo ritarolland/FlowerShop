@@ -41,7 +41,8 @@ object RepositoryModule {
     ): UserUidRepository {
         return UserUidRepositoryImpl(
             sharedPreferences,
-            tokenRepository, api
+            tokenRepository,
+            api
         )
     }
 
@@ -57,8 +58,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideTokenRepository(sharedPreferences: SharedPreferences): TokenRepository {
-        return TokenRepositoryImpl(sharedPreferences)
+    fun provideTokenRepository(sharedPreferences: SharedPreferences, api: FlowerApi): TokenRepository {
+        return TokenRepositoryImpl(sharedPreferences, api)
     }
 
     @Provides
