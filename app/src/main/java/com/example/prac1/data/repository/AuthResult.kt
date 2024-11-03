@@ -1,4 +1,4 @@
-package com.example.prac1.presentation.view
+package com.example.prac1.data.repository
 
 
 sealed class AuthResult<out T> {

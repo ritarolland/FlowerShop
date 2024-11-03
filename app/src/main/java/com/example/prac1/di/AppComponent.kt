@@ -2,7 +2,7 @@ package com.example.prac1.di
 
 import android.content.Context
 
-import com.example.prac1.presentation.view.MainActivity
+import com.example.prac1.MainActivity
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton

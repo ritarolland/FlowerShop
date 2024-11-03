@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.example.prac1.presentation.view.AuthResult
+import com.example.prac1.data.repository.AuthResult
 
 class AuthViewModel @Inject constructor(private val authRepository: AuthRepository) : ViewModel() {
     private val _signInState = MutableStateFlow<AuthResult<Boolean>>(AuthResult.Loading)

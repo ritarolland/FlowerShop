@@ -25,7 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.prac1.R
-import com.example.prac1.presentation.view.AuthResult
+import com.example.prac1.data.repository.AuthResult
 import com.example.prac1.presentation.viewmodel.AuthViewModel
 
 @Composable

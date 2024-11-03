@@ -1,4 +1,4 @@
-package com.example.prac1.presentation.view
+package com.example.prac1
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.prac1.app.MyApplication
-import com.example.prac1.presentation.navigation.MainScreen
+import com.example.prac1.presentation.composable.MainScreen
 import com.example.prac1.presentation.viewmodel.AuthViewModel
 import com.example.prac1.presentation.viewmodel.CartViewModel
 import com.example.prac1.presentation.viewmodel.CatalogViewModel

@@ -20,7 +20,7 @@ class DetailsViewModel @Inject constructor(
     private val userUidRepository: UserUidRepository
 ) : ViewModel() {
 
-    private val _selectedItem = MutableStateFlow(Flower())
+    private val _selectedItem = MutableStateFlow<Flower?>(null)
     val selectedItem = _selectedItem.asStateFlow()
 
     fun loadItemById(itemId: String) {
@@ -30,6 +30,10 @@ class DetailsViewModel @Inject constructor(
                 _selectedItem.value = itemList.find { it.id == itemId } ?: Flower()
             }
         }
+    }
+
+    fun clearSelectedItem() {
+        _selectedItem.value = null
     }
 
     fun addItemToCart(item: Flower) {
