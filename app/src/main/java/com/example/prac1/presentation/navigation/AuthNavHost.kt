@@ -1,5 +1,6 @@
 package com.example.prac1.presentation.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -11,7 +12,8 @@ import com.example.prac1.presentation.viewmodel.AuthViewModel
 @Composable
 fun AuthNavHost(
     navController: NavHostController,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
+    paddingValues: PaddingValues
 ) {
     NavHost(
         navController = navController,
@@ -19,6 +21,7 @@ fun AuthNavHost(
     ) {
         composable(Screens.Auth.route) {
             AuthScreen(
+                paddingValues = paddingValues,
                 authViewModel = authViewModel,
                 onNavigateToRegister = {
                     navController.navigate(Screens.Register.route)

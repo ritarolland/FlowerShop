@@ -6,8 +6,8 @@ import com.example.prac1.domain.model.CartItem
 import com.example.prac1.domain.repository.CartRepository
 import com.example.prac1.domain.repository.TokenRepository
 import com.example.prac1.domain.repository.UserUidRepository
-import com.example.prac1.network.api.FlowerApi
-import com.example.prac1.network.requests.UpdateCartItemRequest
+import com.example.prac1.data.api.FlowerApi
+import com.example.prac1.data.api.requests.UpdateCartItemRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

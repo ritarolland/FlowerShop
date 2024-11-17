@@ -13,6 +13,7 @@ import com.example.prac1.presentation.viewmodel.AuthViewModel
 import com.example.prac1.presentation.viewmodel.CartViewModel
 import com.example.prac1.presentation.viewmodel.CatalogViewModel
 import com.example.prac1.presentation.viewmodel.DetailsViewModel
+import com.example.prac1.presentation.viewmodel.ProfileViewModel
 import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
@@ -25,6 +26,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var cartViewModel: CartViewModel
     private lateinit var catalogViewModel: CatalogViewModel
     private lateinit var authViewModel: AuthViewModel
+    private lateinit var profileViewModel: ProfileViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +36,7 @@ class MainActivity : ComponentActivity() {
         cartViewModel = ViewModelProvider(this, viewModelFactory)[CartViewModel::class]
         catalogViewModel = ViewModelProvider(this, viewModelFactory)[CatalogViewModel::class]
         authViewModel = ViewModelProvider(this, viewModelFactory) [AuthViewModel::class]
+        profileViewModel = ViewModelProvider(this, viewModelFactory) [ProfileViewModel::class]
         setContent {
             MaterialTheme {
                 navController = rememberNavController()
@@ -42,7 +45,8 @@ class MainActivity : ComponentActivity() {
                     authViewModel = authViewModel,
                     catalogViewModel = catalogViewModel,
                     detailsViewModel = detailsViewModel,
-                    cartViewModel = cartViewModel
+                    cartViewModel = cartViewModel,
+                    profileViewModel = profileViewModel
                 )
             }
         }

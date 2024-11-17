@@ -11,9 +11,11 @@ import androidx.navigation.compose.composable
 import com.example.prac1.presentation.composable.CartScreen
 import com.example.prac1.presentation.composable.CatalogScreen
 import com.example.prac1.presentation.composable.DetailsScreen
+import com.example.prac1.presentation.composable.ProfileScreen
 import com.example.prac1.presentation.viewmodel.CartViewModel
 import com.example.prac1.presentation.viewmodel.CatalogViewModel
 import com.example.prac1.presentation.viewmodel.DetailsViewModel
+import com.example.prac1.presentation.viewmodel.ProfileViewModel
 
 @Composable
 fun AppNavHost(
@@ -21,7 +23,8 @@ fun AppNavHost(
     paddingValues: PaddingValues,
     catalogViewModel: CatalogViewModel,
     detailsViewModel: DetailsViewModel,
-    cartViewModel: CartViewModel
+    cartViewModel: CartViewModel,
+    profileViewModel: ProfileViewModel
 ) {
     NavHost(
         navController = navController,
@@ -41,7 +44,7 @@ fun AppNavHost(
             CartScreen(cartViewModel = cartViewModel)
         }
         composable(Screens.Profile.route) {
-            //call our composable screens here
+            ProfileScreen(viewModel = profileViewModel)
         }
     }
 }

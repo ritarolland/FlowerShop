@@ -3,6 +3,7 @@ package com.example.prac1.presentation.composable
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,17 +44,18 @@ fun RegisterScreen(
 @Composable
 fun AuthScreen(
     authViewModel: AuthViewModel,
-    onNavigateToRegister: () -> Unit
+    onNavigateToRegister: () -> Unit,
+    paddingValues: PaddingValues
 ) {
     val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val signInState by authViewModel.signInState.collectAsState(AuthResult.Loading)
-    Scaffold { paddingValues ->
+    Scaffold { paddingValue ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(paddingValue)
                 .padding(16.dp),
             verticalArrangement = Arrangement.Center
         ) {

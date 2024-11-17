@@ -6,8 +6,8 @@ interface TokenRepository {
     suspend fun refreshToken(): Boolean
     suspend fun <T> executeApiCall(
         apiCall: suspend () -> Response<T>,
-        onSuccess: (Response<T>) -> Unit,
-        onError: () -> Unit
+        onSuccess: (Response<T>) -> Unit = {},
+        onError: () -> Unit = {}
     )
     fun createAuthHeader(): String
     fun getToken(): String?

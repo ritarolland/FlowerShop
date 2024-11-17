@@ -1,4 +1,4 @@
-package com.example.prac1.data.model
+package com.example.prac1.data.api.model
 
 data class FlowerDataModel(
     val id: String,

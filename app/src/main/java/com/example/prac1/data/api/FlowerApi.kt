@@ -1,13 +1,14 @@
-package com.example.prac1.network.api
+package com.example.prac1.data.api
 
-import com.example.prac1.data.model.CartItemDataModel
-import com.example.prac1.data.model.FlowerDataModel
-import com.example.prac1.network.requests.LoginRequest
-import com.example.prac1.network.requests.RefreshTokenRequest
-import com.example.prac1.network.requests.UpdateCartItemRequest
-import com.example.prac1.network.responses.LoginResponse
-import com.example.prac1.network.responses.RefreshTokenResponse
-import com.example.prac1.network.responses.UserIdResponse
+import com.example.prac1.data.api.model.CartItemDataModel
+import com.example.prac1.data.api.model.FlowerDataModel
+import com.example.prac1.data.api.model.UserInfoDataModel
+import com.example.prac1.data.api.requests.LoginRequest
+import com.example.prac1.data.api.requests.RefreshTokenRequest
+import com.example.prac1.data.api.requests.UpdateCartItemRequest
+import com.example.prac1.data.api.responses.LoginResponse
+import com.example.prac1.data.api.responses.RefreshTokenResponse
+import com.example.prac1.data.api.responses.UserIdResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -49,6 +50,11 @@ interface FlowerApi {
     suspend fun getUser(
         @Header("Authorization") token: String
     ): Response<UserIdResponse>
+
+    @GET("/rest/v1/users")
+    suspend fun getUserInfo(
+        @Query("id") userId: String
+    ): Response<List<UserInfoDataModel>>
 
     @PATCH("/rest/v1/cart_items")
     @Headers(

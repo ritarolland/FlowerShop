@@ -1,4 +1,4 @@
-package com.example.prac1.network.requests
+package com.example.prac1.data.api.requests
 
 data class LoginRequest(
     private val email: String,

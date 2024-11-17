@@ -2,8 +2,8 @@ package com.example.prac1.data.repository
 
 import android.content.SharedPreferences
 import com.example.prac1.domain.repository.TokenRepository
-import com.example.prac1.network.api.FlowerApi
-import com.example.prac1.network.requests.RefreshTokenRequest
+import com.example.prac1.data.api.FlowerApi
+import com.example.prac1.data.api.requests.RefreshTokenRequest
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
 

@@ -1,6 +1,6 @@
-package com.example.prac1.network.responses
+package com.example.prac1.data.api.responses
 
-import com.example.prac1.data.model.UserDataModel
+import com.example.prac1.data.api.model.UserDataModel
 
 data class LoginResponse(
     val access_token: String,

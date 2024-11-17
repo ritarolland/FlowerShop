@@ -8,10 +8,9 @@ import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [RepositoryModule::class, ViewModelModule::class, NetworkModule::class])
+@Component(modules = [RepositoryModule::class, ViewModelModule::class, NetworkModule::class, DatabaseModule::class])
 interface AppComponent {
     fun inject(activity: MainActivity)
-
     @Component.Factory
     interface AppComponentFactory {
         fun create(@BindsInstance context: Context): AppComponent

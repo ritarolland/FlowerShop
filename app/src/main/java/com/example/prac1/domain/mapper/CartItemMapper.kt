@@ -1,6 +1,6 @@
 package com.example.prac1.domain.mapper
 
-import com.example.prac1.data.model.CartItemDataModel
+import com.example.prac1.data.api.model.CartItemDataModel
 import com.example.prac1.domain.model.CartItem
 
 object CartItemMapper {

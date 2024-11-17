@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import android.util.Log
 import com.example.prac1.domain.repository.TokenRepository
 import com.example.prac1.domain.repository.UserUidRepository
-import com.example.prac1.network.api.FlowerApi
+import com.example.prac1.data.api.FlowerApi
 import javax.inject.Inject
 
 class UserUidRepositoryImpl @Inject constructor(

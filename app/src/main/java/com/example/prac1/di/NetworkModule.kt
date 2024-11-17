@@ -1,6 +1,6 @@
 package com.example.prac1.di
 
-import com.example.prac1.network.api.FlowerApi
+import com.example.prac1.data.api.FlowerApi
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module

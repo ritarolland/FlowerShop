@@ -2,8 +2,8 @@ package com.example.prac1.data.repository
 
 import com.example.prac1.domain.repository.AuthRepository
 import com.example.prac1.domain.repository.TokenRepository
-import com.example.prac1.network.api.FlowerApi
-import com.example.prac1.network.requests.LoginRequest
+import com.example.prac1.data.api.FlowerApi
+import com.example.prac1.data.api.requests.LoginRequest
 
 class AuthRepositoryImpl(
     private val api: FlowerApi,

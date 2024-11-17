@@ -5,4 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface FlowersRepository {
     fun getCatalogItems(): Flow<List<Flower>>
+    suspend fun saveFlowersToCache(flowers: List<Flower>)
 }

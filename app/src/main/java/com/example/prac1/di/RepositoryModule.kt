@@ -5,14 +5,17 @@ import android.content.SharedPreferences
 import com.example.prac1.data.repository.AuthRepositoryImpl
 import com.example.prac1.data.repository.CartRepositoryImpl
 import com.example.prac1.data.repository.FlowersRepositoryImpl
+import com.example.prac1.data.repository.ProfileRepositoryImpl
 import com.example.prac1.data.repository.TokenRepositoryImpl
 import com.example.prac1.data.repository.UserUidRepositoryImpl
 import com.example.prac1.domain.repository.AuthRepository
 import com.example.prac1.domain.repository.CartRepository
 import com.example.prac1.domain.repository.FlowersRepository
+import com.example.prac1.domain.repository.ProfileRepository
 import com.example.prac1.domain.repository.TokenRepository
 import com.example.prac1.domain.repository.UserUidRepository
-import com.example.prac1.network.api.FlowerApi
+import com.example.prac1.data.api.FlowerApi
+import com.example.prac1.data.db.FlowerDao
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -28,8 +31,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideFlowersRepository(api: FlowerApi): FlowersRepository {
-        return FlowersRepositoryImpl(api)
+    fun provideFlowersRepository(api: FlowerApi, dao: FlowerDao): FlowersRepository {
+        return FlowersRepositoryImpl(api, dao)
     }
 
     @Provides
@@ -66,5 +69,11 @@ object RepositoryModule {
     @Singleton
     fun provideAuthRepository(api: FlowerApi, tokenRepository: TokenRepository): AuthRepository {
         return AuthRepositoryImpl(api, tokenRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProfileRepository(api: FlowerApi, uidRepository: UserUidRepository): ProfileRepository {
+        return ProfileRepositoryImpl(api, uidRepository)
     }
 }
