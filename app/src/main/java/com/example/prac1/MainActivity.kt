@@ -3,7 +3,11 @@ package com.example.prac1
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -31,6 +35,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         (application as MyApplication).appComponent.inject(this)
         detailsViewModel = ViewModelProvider(this, viewModelFactory)[DetailsViewModel::class]
         cartViewModel = ViewModelProvider(this, viewModelFactory)[CartViewModel::class]
@@ -40,14 +45,19 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 navController = rememberNavController()
-                MainScreen(
-                    navController = navController,
-                    authViewModel = authViewModel,
-                    catalogViewModel = catalogViewModel,
-                    detailsViewModel = detailsViewModel,
-                    cartViewModel = cartViewModel,
-                    profileViewModel = profileViewModel
-                )
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    MainScreen(
+                        navController = navController,
+                        authViewModel = authViewModel,
+                        catalogViewModel = catalogViewModel,
+                        detailsViewModel = detailsViewModel,
+                        cartViewModel = cartViewModel,
+                        profileViewModel = profileViewModel
+                    )
+                }
             }
         }
     }

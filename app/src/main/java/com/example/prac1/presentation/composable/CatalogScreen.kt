@@ -1,51 +1,74 @@
 package com.example.prac1.presentation.composable
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.prac1.R
 import com.example.prac1.domain.model.Flower
 import com.example.prac1.presentation.viewmodel.CatalogViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CatalogScreen(catalogViewModel: CatalogViewModel, onItemClick: (Flower) -> Unit) {
     val catalogItems by catalogViewModel.catalogItems.collectAsState(emptyList())
-    Scaffold(modifier = Modifier.padding(16.dp)) { paddingValues ->
+    var searchQuery by remember { mutableStateOf("") }
+    Scaffold(modifier = Modifier.padding(16.dp),
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(text = stringResource(R.string.catalog))
+                }
+            )
+        }
+        ) { paddingValues ->
         Column(
             modifier = Modifier.padding(paddingValues)
         ) {
-            Text(
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { query ->
+                    searchQuery = query
+                },
+                singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
-                text = stringResource(id = R.string.catalog),
-                textAlign = TextAlign.Center,
-                fontSize = 24.sp,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Search
+                ),
+                keyboardActions = KeyboardActions(
+                    onSearch = {
+                        catalogViewModel.updateSearchQuery(searchQuery)
+                    }
+                ),
+                placeholder = { Text("Введите запрос") }
             )
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
@@ -54,6 +77,7 @@ fun CatalogScreen(catalogViewModel: CatalogViewModel, onItemClick: (Flower) -> U
                 items(catalogItems.size) { i ->
                     FlowerCard(flower = catalogItems[i], onClick = { onItemClick(catalogItems[i]) })
                 }
+                item { Spacer(modifier = Modifier.padding(8.dp)) }
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.example.prac1.presentation.composable
 
+import android.annotation.SuppressLint
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -16,6 +17,8 @@ import com.example.prac1.presentation.viewmodel.CatalogViewModel
 import com.example.prac1.presentation.viewmodel.DetailsViewModel
 import com.example.prac1.presentation.viewmodel.ProfileViewModel
 
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainScreen(
     authViewModel: AuthViewModel,
@@ -26,33 +29,27 @@ fun MainScreen(
     profileViewModel: ProfileViewModel
 ) {
     val isAuthorized by authViewModel.isAuthorized.collectAsState()
-    /*LaunchedEffect(isAuthorized) {
-        if (isAuthorized == false) {
-            navController.navigate(Screens.Auth.route) {
-                popUpTo(0) { inclusive = true }
-            }
-        }
-    }*/
     if (isAuthorized == false) {
         Scaffold { paddingValues ->
-            AuthNavHost(paddingValues = paddingValues,
+            AuthNavHost(
+                paddingValues = paddingValues,
                 navController = navController,
-                authViewModel = authViewModel)
+                authViewModel = authViewModel
+            )
+        }
+    } else {
+        Scaffold(
+            bottomBar = {
+                BottomNavigationBar(navController = navController, catalogViewModel = catalogViewModel)
+            }
+        ) {
+            AppNavHost(
+                navController = navController,
+                catalogViewModel = catalogViewModel,
+                detailsViewModel = detailsViewModel,
+                cartViewModel = cartViewModel,
+                profileViewModel = profileViewModel
+            )
         }
     }
-else{
-    Scaffold(
-        bottomBar = {
-            BottomNavigationBar(navController = navController)
-        }
-    ) { paddingValues ->
-        AppNavHost(
-            navController = navController,
-            paddingValues = paddingValues,
-            catalogViewModel = catalogViewModel,
-            detailsViewModel = detailsViewModel,
-            cartViewModel = cartViewModel,
-            profileViewModel = profileViewModel
-        )
-    }
-}}
+}

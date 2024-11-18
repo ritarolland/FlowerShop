@@ -27,7 +27,7 @@ class CartRepositoryImpl @Inject constructor(
         loadCartItems()
     }
 
-    private fun loadCartItems() {
+    private fun loadCartItems(onComplete: (Boolean) -> Unit = {}) {
         ioScope.launch {
             tokenRepository.executeApiCall(
                 apiCall = { api.getCartItems(tokenRepository.createAuthHeader()) },
@@ -39,11 +39,13 @@ class CartRepositoryImpl @Inject constructor(
                             ?.map { mapToDomain(it) }
                             ?.sortedBy { it.id } ?: emptyList()
                         _cartItems.value = cartItems
+                        onComplete(true)
                     }
                 },
                 onError = {
                     _cartItems.value = emptyList()
                     // вывести что пользователь не авторизован
+                    onComplete(false)
                 }
             )
         }
@@ -53,14 +55,21 @@ class CartRepositoryImpl @Inject constructor(
         return _cartItems
     }
 
-    override fun addItemToCart(cartItem: CartItem) {
+    override fun addItemToCart(cartItem: CartItem, onComplete: (Boolean) -> Unit) {
         ioScope.launch {
             val cartItemDataModel = CartItemMapper.mapToDataModel(cartItem)
             tokenRepository.executeApiCall(
-                apiCall = { api.addCartItem(tokenRepository.createAuthHeader(), cartItemDataModel) },
-                onSuccess = { loadCartItems() },
+                apiCall = {
+                    api.addCartItem(
+                        tokenRepository.createAuthHeader(),
+                        cartItemDataModel
+                    )
+                },
+                onSuccess = {
+                    loadCartItems(onComplete = onComplete)
+                },
                 onError = {
-                    // вывести что пользователь не авторизован
+                    onComplete(false)
                 }
             )
         }
@@ -82,6 +91,11 @@ class CartRepositoryImpl @Inject constructor(
                 }
             )
         }
+    }
+
+    override fun countFlowerInCart(flowerId: String): Int {
+        val cartItem = _cartItems.value.find { it.flowerId == flowerId }
+        return cartItem?.quantity ?: 0
     }
 
     /*override fun removeItemFromCart(cartItem: CartItem) {

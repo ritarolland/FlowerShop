@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -59,34 +62,31 @@ fun CartScreen(cartViewModel: CartViewModel) {
     val selectedItems = remember { mutableStateListOf<String>() }
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier
+            .padding(16.dp),
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    containerColor = Color.Transparent,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = {
-                    Text(text = stringResource(id = R.string.cart))
-                },
-
-                navigationIcon = {
-                    IconButton(onClick = { /* navigate back */ }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Localized description"
-                        )
-                    }
+                    Text(modifier = Modifier.padding(bottom = 4.dp),
+                        text = stringResource(id = R.string.cart))
                 },
                 actions = {
+                    Box(modifier = Modifier
+                        .padding(end = 16.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .clickable {
+                            isSelectionMode.value = !isSelectionMode.value
+                            selectedItems.clear()
+                        }){
                     Text(
                         text = if (isSelectionMode.value) "Done" else "Select",
                         modifier = Modifier
-                            .padding(end = 16.dp)
-                            .clickable {
-                                isSelectionMode.value = !isSelectionMode.value
-                                selectedItems.clear()
-                            })
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    )}
                 },
                 scrollBehavior = scrollBehavior,
             )
@@ -115,6 +115,7 @@ fun CartScreen(cartViewModel: CartViewModel) {
                     )
                 }
             }
+            item { Spacer(modifier = Modifier.padding(8.dp)) }
         }
     }
 }
@@ -186,51 +187,6 @@ fun CartItemCard(
                         .padding(8.dp)
                         .align(Alignment.TopEnd)
                 )
-            }
-        }
-        }
-}
-
-@Composable
-fun QuantitySelectionCard(quantity: Int, onQuantityChange: (Int) -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .wrapContentWidth()
-                .padding(4.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable {
-                        if (quantity > 1) {
-                            onQuantityChange(quantity - 1)
-                        }
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "-", fontSize = 24.sp)
-            }
-            Text(
-                text = quantity.toString(),
-                modifier = Modifier.weight(1f),
-                textAlign = TextAlign.Center,
-                fontSize = 20.sp,
-            )
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable {
-                        onQuantityChange(quantity + 1)
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "+", fontSize = 24.sp)
             }
         }
     }

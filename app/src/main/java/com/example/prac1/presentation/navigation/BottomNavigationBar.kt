@@ -11,10 +11,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import com.example.prac1.presentation.viewmodel.CatalogViewModel
 
 @Composable
 fun BottomNavigationBar(
-    navController: NavHostController
+    navController: NavHostController,
+    catalogViewModel: CatalogViewModel
 ) {
     var navigationSelectedItem by remember { mutableIntStateOf(0) }
     NavigationBar {
@@ -33,6 +35,9 @@ fun BottomNavigationBar(
                     },
                     onClick = {
                         navigationSelectedItem = index
+                        if (navigationItem.route == Screens.Catalog.route) {
+                            catalogViewModel.updateSearchQuery("")
+                        }
                         navController.navigate(navigationItem.route) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 inclusive = true

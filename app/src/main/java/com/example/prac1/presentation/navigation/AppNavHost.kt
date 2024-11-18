@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,7 +21,6 @@ import com.example.prac1.presentation.viewmodel.ProfileViewModel
 @Composable
 fun AppNavHost(
     navController: NavHostController,
-    paddingValues: PaddingValues,
     catalogViewModel: CatalogViewModel,
     detailsViewModel: DetailsViewModel,
     cartViewModel: CartViewModel,
@@ -29,7 +29,7 @@ fun AppNavHost(
     NavHost(
         navController = navController,
         startDestination = Screens.Catalog.route,
-        modifier = Modifier.padding(paddingValues)
+        modifier = Modifier.padding(PaddingValues(bottom = 56.dp))
     ) {
         composable(Screens.Catalog.route) {
             CatalogScreen(catalogViewModel = catalogViewModel) { flower ->

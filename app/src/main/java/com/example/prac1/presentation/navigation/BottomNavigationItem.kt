@@ -15,12 +15,12 @@ data class BottomNavigationItem(
     fun bottomNavigationItems(): List<BottomNavigationItem> {
         return listOf(
             BottomNavigationItem(
-                label = "Home",
+                label = "Catalog",
                 icon = Icons.Filled.Home,
                 route = Screens.Catalog.route
             ),
             BottomNavigationItem(
-                label = "Search",
+                label = "Cart",
                 icon = Icons.Filled.ShoppingCart,
                 route = Screens.Cart.route
             ),

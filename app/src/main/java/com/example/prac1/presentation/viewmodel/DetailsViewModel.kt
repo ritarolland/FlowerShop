@@ -1,6 +1,5 @@
 package com.example.prac1.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.prac1.domain.model.CartItem
@@ -22,34 +21,56 @@ class DetailsViewModel @Inject constructor(
 
     private val _selectedItem = MutableStateFlow<Flower?>(null)
     val selectedItem = _selectedItem.asStateFlow()
+    private val _flowerCountInCart = MutableStateFlow<Int?>(null)
+    val flowerCountInCart = _flowerCountInCart.asStateFlow()
 
     fun loadItemById(itemId: String) {
         viewModelScope.launch {
             val items = catalogRepository.getCatalogItems()
             items.collect { itemList ->
                 _selectedItem.value = itemList.find { it.id == itemId } ?: Flower()
+                updateFlowerCount()
             }
         }
+    }
+    private suspend fun updateFlowerCount() {
+        _flowerCountInCart.emit(cartRepository.countFlowerInCart(_selectedItem.value?.id ?: ""))
     }
 
     fun clearSelectedItem() {
         _selectedItem.value = null
     }
 
-    fun addItemToCart(item: Flower) {
+    fun addItemToCart() {
         viewModelScope.launch {
-            val uid = userUidRepository.getUserUid()
-            if (uid == null) {
-                Log.d("DETAIL", "uid null")
-                return@launch
+            val uid = userUidRepository.getUserUid() ?: return@launch
+            if (_selectedItem.value != null) {
+                val cartItem = CartItem(
+                    id = UUID.randomUUID().toString(),
+                    flowerId = _selectedItem.value!!.id,
+                    userId = uid,
+                    quantity = 1
+                )
+                cartRepository.addItemToCart(cartItem){ success ->
+                    if (success) {
+                        viewModelScope.launch {
+                            updateFlowerCount()
+                        }
+                    } else {
+                        viewModelScope.launch {
+                            updateFlowerCount()
+                        }
+                    }
+                }
             }
-            val cartItem = CartItem(
-                id = UUID.randomUUID().toString(),
-                flowerId = item.id,
-                userId = uid,
-                quantity = 2
-            )
-            cartRepository.addItemToCart(cartItem)
         }
+    }
+
+    fun changeItemsQuantity() {
+
+    }
+
+    fun deleteItemFromCart() {
+
     }
 }

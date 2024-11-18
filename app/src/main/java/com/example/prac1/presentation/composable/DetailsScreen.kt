@@ -20,6 +20,9 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
@@ -32,9 +35,19 @@ import com.example.prac1.presentation.viewmodel.DetailsViewModel
 @Composable
 fun DetailsScreen(flowerId: String?, detailsViewModel: DetailsViewModel) {
     val currentFlower: Flower? by detailsViewModel.selectedItem.collectAsState(Flower())
+    val flowerCountInCart: Int? by detailsViewModel.flowerCountInCart.collectAsState(null)
+    var fc by remember { mutableStateOf<Int?>(null) }
+    fun updateFc(newFc:Int) {
+        fc = newFc
+    }
     LaunchedEffect(flowerId) {
         if (flowerId != null) {
             detailsViewModel.loadItemById(flowerId)
+        }
+    }
+    LaunchedEffect(flowerCountInCart) {
+        if(flowerCountInCart != null) {
+            updateFc(flowerCountInCart as Int)
         }
     }
     DisposableEffect(Unit) {
@@ -81,13 +94,19 @@ fun DetailsScreen(flowerId: String?, detailsViewModel: DetailsViewModel) {
                         text = flower.price.toString(),
                         fontSize = 24.sp
                     )
-                    Button(
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .fillMaxWidth(),
-                        onClick = { /*TODO*/ }
-                    ) {
-                        Text(text = stringResource(id = R.string.add_to_cart))
+                    if(fc == 0) {
+                        Button(
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .fillMaxWidth(),
+                            onClick = {
+                                detailsViewModel.addItemToCart()
+                            }
+                        ) {
+                            Text(text = stringResource(id = R.string.add_to_cart))
+                        }
+                    } else if(fc is Int) {
+                        QuantitySelectionCard(flowerCountInCart as Int) { detailsViewModel.changeItemsQuantity() }
                     }
 
                     Text(
