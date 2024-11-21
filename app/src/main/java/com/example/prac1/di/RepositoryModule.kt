@@ -16,6 +16,8 @@ import com.example.prac1.domain.repository.TokenRepository
 import com.example.prac1.domain.repository.UserUidRepository
 import com.example.prac1.data.api.FlowerApi
 import com.example.prac1.data.db.FlowerDao
+import com.example.prac1.data.repository.FavouritesRepositoryImpl
+import com.example.prac1.domain.repository.FavouritesRepository
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -33,6 +35,12 @@ object RepositoryModule {
     @Singleton
     fun provideFlowersRepository(api: FlowerApi, dao: FlowerDao): FlowersRepository {
         return FlowersRepositoryImpl(api, dao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFavouritesRepository(api: FlowerApi, uidRepository: UserUidRepository, tokenRepository: TokenRepository): FavouritesRepository {
+        return FavouritesRepositoryImpl(api, uidRepository, tokenRepository)
     }
 
     @Provides

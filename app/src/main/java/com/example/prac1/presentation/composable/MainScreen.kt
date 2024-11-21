@@ -15,6 +15,7 @@ import com.example.prac1.presentation.viewmodel.AuthViewModel
 import com.example.prac1.presentation.viewmodel.CartViewModel
 import com.example.prac1.presentation.viewmodel.CatalogViewModel
 import com.example.prac1.presentation.viewmodel.DetailsViewModel
+import com.example.prac1.presentation.viewmodel.FavouritesViewModel
 import com.example.prac1.presentation.viewmodel.ProfileViewModel
 
 
@@ -26,7 +27,8 @@ fun MainScreen(
     catalogViewModel: CatalogViewModel,
     detailsViewModel: DetailsViewModel,
     cartViewModel: CartViewModel,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    favouritesViewModel: FavouritesViewModel
 ) {
     val isAuthorized by authViewModel.isAuthorized.collectAsState()
     if (isAuthorized == false) {
@@ -48,7 +50,8 @@ fun MainScreen(
                 catalogViewModel = catalogViewModel,
                 detailsViewModel = detailsViewModel,
                 cartViewModel = cartViewModel,
-                profileViewModel = profileViewModel
+                profileViewModel = profileViewModel,
+                favouritesViewModel = favouritesViewModel
             )
         }
     }

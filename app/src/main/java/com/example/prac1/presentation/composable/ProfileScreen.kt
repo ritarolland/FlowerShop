@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.example.prac1.presentation.viewmodel.ProfileViewModel
 
 @Composable
-fun ProfileScreen(viewModel: ProfileViewModel) {
+fun ProfileScreen(viewModel: ProfileViewModel, navigateToFavourites:() -> Unit, navigateToOrders:() -> Unit) {
     val userInfo by viewModel.userInfo.collectAsState(null)
     Scaffold { paddingValues ->
         Column(
@@ -42,7 +42,7 @@ fun ProfileScreen(viewModel: ProfileViewModel) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        /**TODO navigate to orders**/
+                        navigateToOrders()
                     }
             ) {
                 Text(text = "My orders")
@@ -52,7 +52,7 @@ fun ProfileScreen(viewModel: ProfileViewModel) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        /**TODO navigate to favourites**/
+                        navigateToFavourites()
                     }
             ) {
                 Text(text = "Favourites")

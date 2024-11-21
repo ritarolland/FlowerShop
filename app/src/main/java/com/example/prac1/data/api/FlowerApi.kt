@@ -1,6 +1,7 @@
 package com.example.prac1.data.api
 
 import com.example.prac1.data.api.model.CartItemDataModel
+import com.example.prac1.data.api.model.FavouriteDataModel
 import com.example.prac1.data.api.model.FlowerDataModel
 import com.example.prac1.data.api.model.UserInfoDataModel
 import com.example.prac1.data.api.requests.LoginRequest
@@ -67,4 +68,25 @@ interface FlowerApi {
         @Body updateCartItemRequest: UpdateCartItemRequest
     ): Response<Unit>
 
+    @GET("/rest/v1/favourites")
+    suspend fun loadFavourites(
+        @Header("Authorization") token: String,
+        @Query("user_id") userId: String
+    ): Response<List<FavouriteDataModel>>
+
+    @POST("/rest/v1/favourites")
+    @Headers(
+        "Content-Type: application/json",
+        "Prefer: return=minimal"
+    )
+    fun addFavourite(
+        @Header("Authorization") token: String,
+        @Body favouriteDataModel: FavouriteDataModel
+    ): Response<Unit>
+
+    @GET("/rest/v1/flower_items")
+    suspend fun getFlowerById(
+        @Header("Authorization") token: String,
+        @Query("id") flowerId: String
+    ): Response<List<FlowerDataModel>>
 }

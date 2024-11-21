@@ -19,12 +19,30 @@ class CartViewModel@Inject constructor(
     private val _cartItems = MutableStateFlow<List<CartItem>>(emptyList())
     val cartItems: StateFlow<List<CartItem>> = _cartItems
 
+    private val _totalCost = MutableStateFlow(0.0)
+    val totalCost = _totalCost.asStateFlow()
+
+    private val _selectedItems = MutableStateFlow<List<String>>(emptyList())
+    val selectedItems = _selectedItems.asStateFlow()
+
+    private val _isSelectionMode = MutableStateFlow(false)
+    val isSelectionMode: StateFlow<Boolean> = _isSelectionMode.asStateFlow()
+
     private val _catalogItems = MutableStateFlow<List<Flower>>(emptyList())
-    val catalogItems = _catalogItems.asStateFlow()
 
     init {
         loadCatalogItems()
         loadCartItems()
+    }
+
+    fun updateTotalCost() {
+        val cartItemsSelected = _cartItems.value.filter { it.id in _selectedItems.value }
+        _totalCost.value = cartItemsSelected.sumOf { cartItem ->
+            val catalogItem = _catalogItems.value.firstOrNull { it.id == cartItem.flowerId }
+            catalogItem?.let { item ->
+                cartItem.quantity * item.price
+            } ?: 0.0
+        }
     }
 
     private fun loadCartItems() {
@@ -49,5 +67,28 @@ class CartViewModel@Inject constructor(
 
     fun updateCartItemQuantity(itemId: String, newQuantity: Int) {
         cartRepository.updateCartItemQuantity(itemId, newQuantity)
+    }
+
+    fun placeOrder(selectedCartItems: List<CartItem>) {
+        viewModelScope.launch {
+            //cartRepository.placeOrder(selectedCartItems)
+        }
+    }
+
+    fun toggleSelectionMode() {
+        _isSelectionMode.value = !_isSelectionMode.value
+        if (!_isSelectionMode.value) {
+            _selectedItems.value = emptyList()
+            updateTotalCost()
+        }
+    }
+
+    fun toggleSelection(itemId: String) {
+        _selectedItems.value = if (_selectedItems.value.contains(itemId)) {
+            _selectedItems.value.filter { it != itemId }
+        } else {
+            _selectedItems.value + itemId
+        }
+        updateTotalCost()
     }
 }

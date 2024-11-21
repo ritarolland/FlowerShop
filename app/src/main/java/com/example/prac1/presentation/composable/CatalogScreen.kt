@@ -1,6 +1,7 @@
 package com.example.prac1.presentation.composable
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +17,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,8 +28,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -41,6 +46,7 @@ import com.example.prac1.presentation.viewmodel.CatalogViewModel
 fun CatalogScreen(catalogViewModel: CatalogViewModel, onItemClick: (Flower) -> Unit) {
     val catalogItems by catalogViewModel.catalogItems.collectAsState(emptyList())
     var searchQuery by remember { mutableStateOf("") }
+    val favourites: List<String> by remember { mutableStateOf(emptyList()) }
     Scaffold(modifier = Modifier.padding(16.dp),
         topBar = {
             CenterAlignedTopAppBar(
@@ -49,7 +55,7 @@ fun CatalogScreen(catalogViewModel: CatalogViewModel, onItemClick: (Flower) -> U
                 }
             )
         }
-        ) { paddingValues ->
+    ) { paddingValues ->
         Column(
             modifier = Modifier.padding(paddingValues)
         ) {
@@ -75,7 +81,9 @@ fun CatalogScreen(catalogViewModel: CatalogViewModel, onItemClick: (Flower) -> U
                 modifier = Modifier.padding(top = 16.dp)
             ) {
                 items(catalogItems.size) { i ->
-                    FlowerCard(flower = catalogItems[i], onClick = { onItemClick(catalogItems[i]) })
+                    FlowerCard(flower = catalogItems[i],
+                        isFavourite = catalogItems[i].id in favourites,
+                        onClick = { onItemClick(catalogItems[i]) })
                 }
                 item { Spacer(modifier = Modifier.padding(8.dp)) }
             }
@@ -84,7 +92,7 @@ fun CatalogScreen(catalogViewModel: CatalogViewModel, onItemClick: (Flower) -> U
 }
 
 @Composable
-fun FlowerCard(flower: Flower, onClick: () -> Unit) {
+fun FlowerCard(flower: Flower, isFavourite: Boolean, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -93,14 +101,26 @@ fun FlowerCard(flower: Flower, onClick: () -> Unit) {
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
-            GlideImage(
-                imageUrl = flower.imageUrl,
-                description = flower.name,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .clip(RoundedCornerShape(8.dp)),
-            )
+            Box {
+                GlideImage(
+                    imageUrl = flower.imageUrl,
+                    description = flower.name,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f)
+                        .clip(RoundedCornerShape(8.dp)),
+                )
+                IconButton(modifier = Modifier.align(Alignment.TopEnd), onClick = {
+                    //favouritesViewModel.toggleIsFavourite()
+                }) {
+                    Icon(
+                        painter = if (isFavourite) painterResource(R.drawable.heart_filled)
+                        else painterResource(R.drawable.heart),
+                        contentDescription = null
+                    )
+                }
+            }
+
             Row(
                 modifier = Modifier
                     .padding(8.dp)

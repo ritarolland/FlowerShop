@@ -36,18 +36,9 @@ import com.example.prac1.presentation.viewmodel.DetailsViewModel
 fun DetailsScreen(flowerId: String?, detailsViewModel: DetailsViewModel) {
     val currentFlower: Flower? by detailsViewModel.selectedItem.collectAsState(Flower())
     val flowerCountInCart: Int? by detailsViewModel.flowerCountInCart.collectAsState(null)
-    var fc by remember { mutableStateOf<Int?>(null) }
-    fun updateFc(newFc:Int) {
-        fc = newFc
-    }
     LaunchedEffect(flowerId) {
         if (flowerId != null) {
             detailsViewModel.loadItemById(flowerId)
-        }
-    }
-    LaunchedEffect(flowerCountInCart) {
-        if(flowerCountInCart != null) {
-            updateFc(flowerCountInCart as Int)
         }
     }
     DisposableEffect(Unit) {
@@ -94,18 +85,19 @@ fun DetailsScreen(flowerId: String?, detailsViewModel: DetailsViewModel) {
                         text = flower.price.toString(),
                         fontSize = 24.sp
                     )
-                    if(fc == 0) {
+                    if(flowerCountInCart == 0) {
                         Button(
                             modifier = Modifier
                                 .padding(8.dp)
                                 .fillMaxWidth(),
                             onClick = {
+                                //start showing progress bar
                                 detailsViewModel.addItemToCart()
                             }
                         ) {
                             Text(text = stringResource(id = R.string.add_to_cart))
                         }
-                    } else if(fc is Int) {
+                    } else if(flowerCountInCart is Int) {
                         QuantitySelectionCard(flowerCountInCart as Int) { detailsViewModel.changeItemsQuantity() }
                     }
 

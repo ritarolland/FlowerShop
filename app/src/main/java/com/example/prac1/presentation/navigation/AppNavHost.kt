@@ -12,10 +12,12 @@ import androidx.navigation.compose.composable
 import com.example.prac1.presentation.composable.CartScreen
 import com.example.prac1.presentation.composable.CatalogScreen
 import com.example.prac1.presentation.composable.DetailsScreen
+import com.example.prac1.presentation.composable.FavouritesScreen
 import com.example.prac1.presentation.composable.ProfileScreen
 import com.example.prac1.presentation.viewmodel.CartViewModel
 import com.example.prac1.presentation.viewmodel.CatalogViewModel
 import com.example.prac1.presentation.viewmodel.DetailsViewModel
+import com.example.prac1.presentation.viewmodel.FavouritesViewModel
 import com.example.prac1.presentation.viewmodel.ProfileViewModel
 
 @Composable
@@ -24,7 +26,8 @@ fun AppNavHost(
     catalogViewModel: CatalogViewModel,
     detailsViewModel: DetailsViewModel,
     cartViewModel: CartViewModel,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    favouritesViewModel: FavouritesViewModel
 ) {
     NavHost(
         navController = navController,
@@ -36,15 +39,24 @@ fun AppNavHost(
                 navController.navigate("details/${flower.id}")
             }
         }
+        composable(Screens.Favourites.route) {
+            FavouritesScreen(favouritesViewModel = favouritesViewModel) { flower ->
+                navController.navigate("details/${flower.id}")
+            }
+        }
         composable("details/{flowerId}") { backStackEntry ->
             val flowerId = backStackEntry.arguments?.getString("flowerId")
             DetailsScreen(flowerId = flowerId, detailsViewModel = detailsViewModel)
         }
         composable(Screens.Cart.route) {
-            CartScreen(cartViewModel = cartViewModel)
+            CartScreen(cartViewModel = cartViewModel){ flower ->
+                navController.navigate("details/${flower.id}")
+            }
         }
         composable(Screens.Profile.route) {
-            ProfileScreen(viewModel = profileViewModel)
+            ProfileScreen(viewModel = profileViewModel,
+                navigateToOrders = {},
+                navigateToFavourites = { navController.navigate(Screens.Favourites.route) })
         }
     }
 }
