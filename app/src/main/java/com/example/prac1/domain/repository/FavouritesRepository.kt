@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface FavouritesRepository {
     fun getFavouriteFlowers(): Flow<List<Flower>>
-    fun addFavourite(flowerId: String)
+    fun toggleIsFavourite(flowerId: String)
 }

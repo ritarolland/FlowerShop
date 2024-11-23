@@ -27,7 +27,7 @@ class FavouritesViewModel @Inject constructor(
         }
     }
 
-    fun addFavourite(flowerId: String) {
-        favouritesRepository.addFavourite(flowerId)
+    fun toggleIsFavourite(flowerId: String) {
+        favouritesRepository.toggleIsFavourite(flowerId)
     }
 }

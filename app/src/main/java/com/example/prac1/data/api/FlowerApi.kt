@@ -3,6 +3,7 @@ package com.example.prac1.data.api
 import com.example.prac1.data.api.model.CartItemDataModel
 import com.example.prac1.data.api.model.FavouriteDataModel
 import com.example.prac1.data.api.model.FlowerDataModel
+import com.example.prac1.data.api.model.OrderDataModel
 import com.example.prac1.data.api.model.UserInfoDataModel
 import com.example.prac1.data.api.requests.LoginRequest
 import com.example.prac1.data.api.requests.RefreshTokenRequest
@@ -12,6 +13,7 @@ import com.example.prac1.data.api.responses.RefreshTokenResponse
 import com.example.prac1.data.api.responses.UserIdResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
@@ -74,14 +76,38 @@ interface FlowerApi {
         @Query("user_id") userId: String
     ): Response<List<FavouriteDataModel>>
 
+    @GET("/rest/v1/orders")
+    suspend fun getOrders(
+        @Header("Authorization") token: String,
+        @Query("user_id") userId: String
+    ): Response<List<OrderDataModel>>
+
+    @GET("/rest/v1/orders")
+    suspend fun getOrderById(
+        @Header("Authorization") token: String,
+        @Query("id") orderId: String
+    ): Response<List<OrderDataModel>>
+
+    @GET("rest/v1/cart_items")
+    suspend fun getOrderItems(
+        @Header("Authorization") token: String,
+        @Query("order_id") orderId: String
+    ): Response<List<CartItemDataModel>>
+
     @POST("/rest/v1/favourites")
     @Headers(
         "Content-Type: application/json",
         "Prefer: return=minimal"
     )
-    fun addFavourite(
+    suspend fun addFavourite(
         @Header("Authorization") token: String,
         @Body favouriteDataModel: FavouriteDataModel
+    ): Response<Unit>
+
+    @DELETE("/rest/v1/favourites")
+    suspend fun deleteFavourite(
+        @Header("Authorization") token: String,
+        @Query("id") id: String
     ): Response<Unit>
 
     @GET("/rest/v1/flower_items")

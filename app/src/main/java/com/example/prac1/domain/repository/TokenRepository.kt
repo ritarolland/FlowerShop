@@ -7,8 +7,11 @@ interface TokenRepository {
     suspend fun <T> executeApiCall(
         apiCall: suspend () -> Response<T>,
         onSuccess: (Response<T>) -> Unit = {},
-        onError: () -> Unit = {}
+        onError: (message: String) -> Unit = {}
     )
+    suspend fun <T> executeApiCall(
+        apiCall: suspend () -> Response<T>
+    ): Response<T>?
     fun createAuthHeader(): String
     fun getToken(): String?
     fun setToken(token: String, expiresIn: Long)

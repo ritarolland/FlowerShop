@@ -46,17 +46,32 @@ class TokenRepositoryImpl(
     override suspend fun <T> executeApiCall(
         apiCall: suspend () -> Response<T>,
         onSuccess: (Response<T>) -> Unit,
-        onError: () -> Unit
+        onError: (message: String) -> Unit
     ) {
         try {
             val response = apiCallWithRetry(apiCall)
             if (response.isSuccessful) {
                 onSuccess(response)
             } else {
-                onError()
+                onError("response code: ${response.code()}")
             }
         } catch (e: Exception) {
-            onError()
+            onError(e.message.toString())
+        }
+    }
+
+    override suspend fun <T> executeApiCall(
+        apiCall: suspend () -> Response<T>
+    ): Response<T>? {
+        return try {
+            val response = apiCallWithRetry(apiCall)
+            if (response.isSuccessful) {
+                response
+            } else {
+                null // Возвращаем null при ошибке
+            }
+        } catch (e: Exception) {
+            null // Возвращаем null при исключении
         }
     }
 

@@ -75,25 +75,52 @@ class FavouritesRepositoryImpl @Inject constructor(
             }
         }
 
-    override fun addFavourite(flowerId: String) {
+    private fun addFavourite(flowerId: String) {
         ioScope.launch {
-            val uid = uidRepository.getUserUid()
-            val token = tokenRepository.getToken()
-            if (uid != null && token != null) {
-                val response = api.addFavourite(
-                    token = token,
-                    favouriteDataModel = FavouriteDataModel(
+            val userId = uidRepository.getUserUid()
+            if (userId != null)
+            tokenRepository.executeApiCall(
+                apiCall = {
+                    api.addFavourite(tokenRepository.createAuthHeader(), FavouriteDataModel(
                         id = UUID.randomUUID().toString(),
-                        user_id = uid,
+                        user_id = userId,
                         flower_id = flowerId
-                    )
-                )
-                if (response.isSuccessful) {
-                    loadFavourites()
-                } else {
-                    TODO("вывести сообщение об ошибке")
+                    ))
+                },
+                onSuccess = {
+                    ioScope.launch {
+                        loadFavourites()
+                    }
                 }
+            )
+        }
+    }
+
+    private fun deleteFavourite(flowerId: String) {
+        ioScope.launch {
+            val userId = uidRepository.getUserUid()
+            val id = _favourites.value.find { it.flower_id == flowerId && it.user_id == userId}?.id
+            if (id != null) {
+                tokenRepository.executeApiCall(
+                    apiCall = {
+                        api.deleteFavourite(tokenRepository.createAuthHeader(), "eq.$id")
+                    },
+                    onSuccess = {
+                        ioScope.launch { loadFavourites() }
+                    },
+                    onError = { message ->
+                        Log.d("FAVOURITE", "Error deleting: $message")
+                    }
+                )
             }
+        }
+    }
+
+    override fun toggleIsFavourite(flowerId: String) {
+        if(flowerId in _favourites.value.map { it.flower_id }) {
+            deleteFavourite(flowerId)
+        } else {
+            addFavourite(flowerId)
         }
     }
 

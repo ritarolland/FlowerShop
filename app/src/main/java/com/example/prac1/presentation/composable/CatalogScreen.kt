@@ -45,8 +45,8 @@ import com.example.prac1.presentation.viewmodel.CatalogViewModel
 @Composable
 fun CatalogScreen(catalogViewModel: CatalogViewModel, onItemClick: (Flower) -> Unit) {
     val catalogItems by catalogViewModel.catalogItems.collectAsState(emptyList())
-    var searchQuery by remember { mutableStateOf("") }
-    val favourites: List<String> by remember { mutableStateOf(emptyList()) }
+    val searchQuery by catalogViewModel.searchQuery.collectAsState("")
+    val favourites by catalogViewModel.favourites.collectAsState(emptyList())
     Scaffold(modifier = Modifier.padding(16.dp),
         topBar = {
             CenterAlignedTopAppBar(
@@ -62,7 +62,7 @@ fun CatalogScreen(catalogViewModel: CatalogViewModel, onItemClick: (Flower) -> U
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { query ->
-                    searchQuery = query
+                    catalogViewModel.updateSearchQuery(query)
                 },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
@@ -83,7 +83,8 @@ fun CatalogScreen(catalogViewModel: CatalogViewModel, onItemClick: (Flower) -> U
                 items(catalogItems.size) { i ->
                     FlowerCard(flower = catalogItems[i],
                         isFavourite = catalogItems[i].id in favourites,
-                        onClick = { onItemClick(catalogItems[i]) })
+                        onClick = { onItemClick(catalogItems[i]) },
+                        onFavourite = { catalogViewModel.toggleIsFavourite(catalogItems[i].id) })
                 }
                 item { Spacer(modifier = Modifier.padding(8.dp)) }
             }
@@ -92,7 +93,7 @@ fun CatalogScreen(catalogViewModel: CatalogViewModel, onItemClick: (Flower) -> U
 }
 
 @Composable
-fun FlowerCard(flower: Flower, isFavourite: Boolean, onClick: () -> Unit) {
+fun FlowerCard(flower: Flower, isFavourite: Boolean, onClick: () -> Unit, onFavourite: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -111,7 +112,7 @@ fun FlowerCard(flower: Flower, isFavourite: Boolean, onClick: () -> Unit) {
                         .clip(RoundedCornerShape(8.dp)),
                 )
                 IconButton(modifier = Modifier.align(Alignment.TopEnd), onClick = {
-                    //favouritesViewModel.toggleIsFavourite()
+                    onFavourite()
                 }) {
                     Icon(
                         painter = if (isFavourite) painterResource(R.drawable.heart_filled)

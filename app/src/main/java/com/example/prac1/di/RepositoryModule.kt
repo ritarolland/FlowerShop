@@ -17,7 +17,9 @@ import com.example.prac1.domain.repository.UserUidRepository
 import com.example.prac1.data.api.FlowerApi
 import com.example.prac1.data.db.FlowerDao
 import com.example.prac1.data.repository.FavouritesRepositoryImpl
+import com.example.prac1.data.repository.OrdersRepositoryImpl
 import com.example.prac1.domain.repository.FavouritesRepository
+import com.example.prac1.domain.repository.OrdersRepository
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -83,5 +85,15 @@ object RepositoryModule {
     @Singleton
     fun provideProfileRepository(api: FlowerApi, uidRepository: UserUidRepository): ProfileRepository {
         return ProfileRepositoryImpl(api, uidRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOrdersRepository(api: FlowerApi, uidRepository: UserUidRepository, tokenRepository: TokenRepository): OrdersRepository {
+        return OrdersRepositoryImpl(
+            api = api,
+            uidRepository = uidRepository,
+            tokenRepository = tokenRepository
+        )
     }
 }

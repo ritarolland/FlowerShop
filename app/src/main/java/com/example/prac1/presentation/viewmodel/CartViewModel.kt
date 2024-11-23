@@ -35,7 +35,7 @@ class CartViewModel@Inject constructor(
         loadCartItems()
     }
 
-    fun updateTotalCost() {
+    private fun updateTotalCost() {
         val cartItemsSelected = _cartItems.value.filter { it.id in _selectedItems.value }
         _totalCost.value = cartItemsSelected.sumOf { cartItem ->
             val catalogItem = _catalogItems.value.firstOrNull { it.id == cartItem.flowerId }

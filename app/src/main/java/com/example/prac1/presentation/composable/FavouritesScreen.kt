@@ -35,19 +35,27 @@ fun FavouritesScreen(
                 title = {
                     Text(text = stringResource(R.string.favourites))
                 },
-                navigationIcon = { Icon(painter = painterResource(R.drawable.arrow_back), tint = Color.Black, contentDescription = null ) }
+                navigationIcon = {
+                    Icon(
+                        painter = painterResource(R.drawable.arrow_back),
+                        tint = Color.Black,
+                        contentDescription = null
+                    )
+                }
             )
         }
     ) { paddingValues ->
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            modifier = Modifier.padding(top = 16.dp)
+            modifier = Modifier
+                .padding(top = 16.dp)
                 .padding(paddingValues)
         ) {
             items(favouriteFlowers.size) { i ->
                 FlowerCard(flower = favouriteFlowers[i],
                     isFavourite = true,
-                    onClick = { onItemClick(favouriteFlowers[i]) })
+                    onClick = { onItemClick(favouriteFlowers[i]) },
+                    onFavourite = { favouritesViewModel.toggleIsFavourite(favouriteFlowers[i].id) })
             }
             item { Spacer(modifier = Modifier.padding(8.dp)) }
         }
