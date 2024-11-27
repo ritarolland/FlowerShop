@@ -6,6 +6,7 @@ import com.example.prac1.data.api.model.FlowerDataModel
 import com.example.prac1.data.api.model.OrderDataModel
 import com.example.prac1.data.api.model.UserInfoDataModel
 import com.example.prac1.data.api.requests.LoginRequest
+import com.example.prac1.data.api.requests.OrderCartItemRequest
 import com.example.prac1.data.api.requests.RefreshTokenRequest
 import com.example.prac1.data.api.requests.UpdateCartItemRequest
 import com.example.prac1.data.api.responses.LoginResponse
@@ -26,7 +27,7 @@ interface FlowerApi {
     @GET("/rest/v1/flower_items")
     suspend fun getFlowersCatalog(): Response<List<FlowerDataModel>>
 
-    @GET("/rest/v1/cart_items")
+    @GET("/rest/v1/cart_items?order_id=is.null")
     suspend fun getCartItems(
         @Header("Authorization") token: String
     ): Response<List<CartItemDataModel>>
@@ -58,17 +59,6 @@ interface FlowerApi {
     suspend fun getUserInfo(
         @Query("id") userId: String
     ): Response<List<UserInfoDataModel>>
-
-    @PATCH("/rest/v1/cart_items")
-    @Headers(
-        "Content-Type: application/json",
-        "Prefer: return=minimal"
-    )
-    suspend fun updateCartItemQuantity(
-        @Query("id") itemId: String,
-        @Header("Authorization") token: String,
-        @Body updateCartItemRequest: UpdateCartItemRequest
-    ): Response<Unit>
 
     @GET("/rest/v1/favourites")
     suspend fun loadFavourites(
@@ -115,4 +105,42 @@ interface FlowerApi {
         @Header("Authorization") token: String,
         @Query("id") flowerId: String
     ): Response<List<FlowerDataModel>>
+
+    @DELETE("/rest/v1/cart_items")
+    suspend fun deleteItemFromCart(
+        @Header("Authorization") token: String,
+        @Query("id") itemId: String
+    ): Response<Unit>
+
+    @PATCH("/rest/v1/cart_items")
+    @Headers(
+        "Content-Type: application/json",
+        "Prefer: return=minimal"
+    )
+    suspend fun updateCartItemQuantity(
+        @Query("id") itemId: String,
+        @Header("Authorization") token: String,
+        @Body updateCartItemRequest: UpdateCartItemRequest
+    ): Response<Unit>
+
+    @PATCH("/rest/v1/cart_items")
+    @Headers(
+        "Content-Type: application/json",
+        "Prefer: return=minimal"
+    )
+    suspend fun orderCartItem(
+        @Query("id") itemId: String,
+        @Header("Authorization") token: String,
+        @Body orderCartItemRequest: OrderCartItemRequest
+    ): Response<Unit>
+
+    @POST("/rest/v1/orders")
+    @Headers(
+        "Content-Type: application/json",
+        "Prefer: return=minimal"
+    )
+    suspend fun addOrder(
+        @Header("Authorization") token: String,
+        @Body orderDataModel: OrderDataModel
+    ) : Response<Unit>
 }

@@ -21,7 +21,7 @@ class AllOrdersViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadOrders() {
+    suspend fun loadOrders() {
         ordersRepository.getOrders().collect { items ->
             _orders.value = items
         }

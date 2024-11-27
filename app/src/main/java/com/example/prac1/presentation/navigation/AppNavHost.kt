@@ -33,7 +33,8 @@ fun AppNavHost(
     profileViewModel: ProfileViewModel,
     favouritesViewModel: FavouritesViewModel,
     allOrdersViewModel: AllOrdersViewModel,
-    orderViewModel: OrderViewModel
+    orderViewModel: OrderViewModel,
+    logOut:() -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -46,34 +47,37 @@ fun AppNavHost(
             }
         }
         composable(Screens.Favourites.route) {
-            FavouritesScreen(favouritesViewModel = favouritesViewModel) { flower ->
+            FavouritesScreen(favouritesViewModel = favouritesViewModel, onItemClick =  { flower ->
                 navController.navigate("details/${flower.id}")
-            }
+            }, navigateBack = {navController.popBackStack()})
         }
         composable(Screens.AllOrders.route) {
-            AllOrdersScreen(allOrdersViewModel = allOrdersViewModel) { orderId ->
+            AllOrdersScreen(allOrdersViewModel = allOrdersViewModel, onOrderClick = { orderId ->
                 navController.navigate(Screens.Order.orderId(orderId))
-            }
+            }, navigateBack = { navController.popBackStack() })
         }
         composable(Screens.Order.route) { backStackEntry ->
             val orderId = backStackEntry.arguments?.getString("orderId")
-            OrderScreen(orderId = orderId, orderViewModel = orderViewModel) {
+            OrderScreen(orderId = orderId, orderViewModel = orderViewModel, navigateBack = {
                 navController.popBackStack()
-            }
+            }, onItemClick = { flower ->
+                navController.navigate("details/${flower.id}")
+            })
         }
         composable("details/{flowerId}") { backStackEntry ->
             val flowerId = backStackEntry.arguments?.getString("flowerId")
-            DetailsScreen(flowerId = flowerId, detailsViewModel = detailsViewModel)
+            DetailsScreen(flowerId = flowerId, detailsViewModel = detailsViewModel, navigateBack = {navController.popBackStack()})
         }
         composable(Screens.Cart.route) {
-            CartScreen(cartViewModel = cartViewModel){ flower ->
+            CartScreen(cartViewModel = cartViewModel) { flower ->
                 navController.navigate("details/${flower.id}")
             }
         }
         composable(Screens.Profile.route) {
             ProfileScreen(viewModel = profileViewModel,
                 navigateToOrders = { navController.navigate(Screens.AllOrders.route) },
-                navigateToFavourites = { navController.navigate(Screens.Favourites.route) })
+                navigateToFavourites = { navController.navigate(Screens.Favourites.route) },
+                logOut = logOut)
         }
     }
 }

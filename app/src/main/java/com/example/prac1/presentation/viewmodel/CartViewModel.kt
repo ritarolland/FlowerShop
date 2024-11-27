@@ -2,19 +2,24 @@ package com.example.prac1.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.prac1.data.api.model.OrderDataModel
 import com.example.prac1.domain.model.CartItem
 import com.example.prac1.domain.model.Flower
 import com.example.prac1.domain.repository.CartRepository
 import com.example.prac1.domain.repository.FlowersRepository
+import com.example.prac1.domain.repository.OrdersRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.sql.Timestamp
+import java.util.UUID
 import javax.inject.Inject
 
 class CartViewModel@Inject constructor(
     private val cartRepository: CartRepository,
-    private val catalogRepository: FlowersRepository
+    private val catalogRepository: FlowersRepository,
+    private val ordersRepository: OrdersRepository
 ) : ViewModel() {
     private val _cartItems = MutableStateFlow<List<CartItem>>(emptyList())
     val cartItems: StateFlow<List<CartItem>> = _cartItems
@@ -45,6 +50,15 @@ class CartViewModel@Inject constructor(
         }
     }
 
+    fun deleteSelectedCartItems() {
+        viewModelScope.launch {
+            for (cartItemId in _selectedItems.value) {
+                cartRepository.removeItemFromCart(cartItemId)
+            }
+            toggleSelectionMode()
+        }
+    }
+
     private fun loadCartItems() {
         viewModelScope.launch {
             cartRepository.getCartItems().collect { items ->
@@ -66,12 +80,20 @@ class CartViewModel@Inject constructor(
     }
 
     fun updateCartItemQuantity(itemId: String, newQuantity: Int) {
-        cartRepository.updateCartItemQuantity(itemId, newQuantity)
+        if (newQuantity == 0) cartRepository.removeItemFromCart(itemId)
+        else cartRepository.updateCartItemQuantity(itemId, newQuantity)
     }
 
-    fun placeOrder(selectedCartItems: List<CartItem>) {
+    fun placeOrder(timestamp: Timestamp) {
         viewModelScope.launch {
-            //cartRepository.placeOrder(selectedCartItems)
+            val order = cartRepository.createOrder(totalPrice = _totalCost.value, timestamp = timestamp)
+            if (order != null) {
+                cartRepository.addOrder(order)
+                for (cartItemId in _selectedItems.value) {
+                    cartRepository.updateCartItemOrderId(cartItemId, order.id)
+                }
+                toggleSelectionMode()
+            }
         }
     }
 

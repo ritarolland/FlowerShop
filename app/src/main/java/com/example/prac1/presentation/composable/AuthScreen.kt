@@ -23,8 +23,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.prac1.R
 import com.example.prac1.data.repository.AuthResult
 import com.example.prac1.presentation.viewmodel.AuthViewModel
@@ -50,8 +53,10 @@ fun AuthScreen(
     val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    val signInState by authViewModel.signInState.collectAsState(AuthResult.Loading)
-    Scaffold { paddingValue ->
+    val signInState by authViewModel.signInState.collectAsState(null)
+    Scaffold(
+        modifier = Modifier.padding(paddingValues)
+    ) { paddingValue ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -60,12 +65,16 @@ fun AuthScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = stringResource(R.string.flowery)
+                modifier = Modifier.padding(32.dp).fillMaxWidth(),
+                text = stringResource(R.string.flowery),
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
             )
             TextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Логин") },
+                label = { Text("Login") },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -75,7 +84,7 @@ fun AuthScreen(
             TextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Пароль") },
+                label = { Text("Password") },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -89,13 +98,13 @@ fun AuthScreen(
                         authViewModel.signIn(email = email, password = password)
                         //authViewModel.checkAuthorization()
                     } else {
-                        Toast.makeText(context, "Заполните все поля", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Fill in all fields", Toast.LENGTH_SHORT).show()
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = email.isNotEmpty() && password.isNotEmpty() && signInState is AuthResult.Loading
+                enabled = signInState == null
             ) {
-                Text(text = if (signInState is AuthResult.Loading) "Загрузка..." else "Войти")
+                Text(text = if (signInState is AuthResult.Loading) "Loading..." else "Войти")
             }
 
             if (signInState is AuthResult.Error) {

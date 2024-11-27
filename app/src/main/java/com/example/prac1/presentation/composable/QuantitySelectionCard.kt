@@ -49,7 +49,7 @@ fun QuantitySelectionCard(quantity: Int, onQuantityChange: (Int) -> Unit) {
                         )
                     )
                     .clickable {
-                        if (quantity > 1) {
+                        if (quantity > 0) {
                             onQuantityChange(quantity - 1)
                         }
                     },

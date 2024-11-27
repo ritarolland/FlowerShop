@@ -30,6 +30,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -40,6 +41,7 @@ import com.example.prac1.R
 import com.example.prac1.domain.model.CartItem
 import com.example.prac1.domain.model.Flower
 import com.example.prac1.presentation.viewmodel.CartViewModel
+import java.sql.Timestamp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,7 +68,13 @@ fun CartScreen(cartViewModel: CartViewModel, onItemClick:(Flower) -> Unit) {
                 },
                 actions = {
                     Box(modifier = Modifier
-                        .padding(end = 16.dp)
+                        .then(
+                            if (isSelectionMode) {
+                                Modifier.padding(end = 4.dp)
+                            } else {
+                                Modifier.padding(end = 16.dp)
+                            }
+                        )
                         .clip(RoundedCornerShape(16.dp))
                         .clickable {
                             cartViewModel.toggleSelectionMode()
@@ -76,6 +84,21 @@ fun CartScreen(cartViewModel: CartViewModel, onItemClick:(Flower) -> Unit) {
                         modifier = Modifier
                             .padding(horizontal = 8.dp, vertical = 4.dp)
                     )}
+                    if (isSelectionMode) {
+                        Box(modifier = Modifier
+                            .padding(end = 16.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .clickable(enabled = selectedItems.isNotEmpty()) {
+                                cartViewModel.deleteSelectedCartItems()
+                            })
+                        {
+                            Text(
+                                text = "Delete",
+                                color = if (selectedItems.isNotEmpty()) Color.Red else Color.Gray,
+                                modifier = Modifier
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            )}
+                    }
                 },
                 scrollBehavior = scrollBehavior,
             )
@@ -105,8 +128,7 @@ fun CartScreen(cartViewModel: CartViewModel, onItemClick:(Flower) -> Unit) {
             }
             Button(
                 onClick = {
-                    val selectedCartItems = cartItems.filter { it.id in selectedItems }
-                    cartViewModel.placeOrder(selectedCartItems)
+                    cartViewModel.placeOrder(Timestamp(System.currentTimeMillis()))
                 },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)

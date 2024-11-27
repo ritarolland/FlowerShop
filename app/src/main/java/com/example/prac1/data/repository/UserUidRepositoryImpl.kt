@@ -16,7 +16,6 @@ class UserUidRepositoryImpl @Inject constructor(
     override suspend fun getUserUid(): String? {
         val uid = sharedPreferences.getString("user_uid", null)
         if (uid == null) {
-            Log.d("UID", "shared pref null")
             var newUid: String? = null
             tokenRepository.executeApiCall(
                 apiCall = {api.getUser(tokenRepository.createAuthHeader())},

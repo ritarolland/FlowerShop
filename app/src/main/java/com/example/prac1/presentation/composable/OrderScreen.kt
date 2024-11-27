@@ -12,25 +12,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -43,7 +41,7 @@ import com.example.prac1.presentation.viewmodel.OrderViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OrderScreen(orderId: String?, orderViewModel: OrderViewModel, navigateBack: () -> Unit) {
+fun OrderScreen(orderId: String?, orderViewModel: OrderViewModel, navigateBack: () -> Unit, onItemClick:(Flower) -> Unit) {
     val currentOrder by orderViewModel.order.collectAsState(null)
     val orderItemsMap by orderViewModel.flowersMap.collectAsState(emptyMap())
     LaunchedEffect(orderId) {
@@ -65,7 +63,7 @@ fun OrderScreen(orderId: String?, orderViewModel: OrderViewModel, navigateBack: 
                     Icon(
                         painter = painterResource(R.drawable.arrow_back),
                         contentDescription = null,
-                        modifier = Modifier.clickable { navigateBack() }
+                        modifier = Modifier.clip(CircleShape).clickable { navigateBack() }
                     )
                 }
             )
@@ -93,21 +91,8 @@ fun OrderScreen(orderId: String?, orderViewModel: OrderViewModel, navigateBack: 
                                 flower = flower,
                                 cartItem = cartItem
                             ) {
-                                TODO()
+                                onItemClick(flower)
                             }
-                            /*Card(
-                                modifier = Modifier.fillMaxWidth()
-                                    .padding(8.dp)
-                                    .clickable {
-                                        TODO()
-                                    }
-                            ) {
-                                Column(modifier = Modifier.padding(8.dp)) {
-                                    Text(text = "Flower: ${flower.name}")
-                                    Text(text = "Quantity: ${cartItem.quantity}")
-                                    Text(text = "Total price: ${flower.price * cartItem.quantity}")
-                                }
-                            }*/
                         }
                     }
                 }

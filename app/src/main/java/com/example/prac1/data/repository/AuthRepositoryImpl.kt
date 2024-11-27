@@ -28,7 +28,13 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun isUserAuthorized(): Boolean{
+    override fun logOut() {
+        tokenRepository.clearToken()
+        tokenRepository.clearRefreshToken()
+    }
+
+    override suspend fun isUserAuthorized(): Boolean {
+        if (tokenRepository.getToken() == null && tokenRepository.getRefreshToken() == null) return false
         if (tokenRepository.isTokenExpired()) {
             val successfullyRefreshed = tokenRepository.refreshToken()
             return successfullyRefreshed

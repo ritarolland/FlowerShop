@@ -57,7 +57,8 @@ fun MainScreen(
                 profileViewModel = profileViewModel,
                 favouritesViewModel = favouritesViewModel,
                 allOrdersViewModel = allOrdersViewModel,
-                orderViewModel = orderViewModel
+                orderViewModel = orderViewModel,
+                logOut = { authViewModel.logOut() }
             )
         }
     }

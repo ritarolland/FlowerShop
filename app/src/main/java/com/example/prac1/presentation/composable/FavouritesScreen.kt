@@ -1,9 +1,11 @@
 package com.example.prac1.presentation.composable
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -13,8 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -26,10 +28,12 @@ import com.example.prac1.presentation.viewmodel.FavouritesViewModel
 @Composable
 fun FavouritesScreen(
     favouritesViewModel: FavouritesViewModel,
-    onItemClick: (Flower) -> Unit
+    onItemClick: (Flower) -> Unit,
+    navigateBack:() -> Unit
 ) {
     val favouriteFlowers by favouritesViewModel.favouriteFlowers.collectAsState(emptyList())
     Scaffold(
+        modifier = Modifier.padding(16.dp),
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -37,6 +41,9 @@ fun FavouritesScreen(
                 },
                 navigationIcon = {
                     Icon(
+                        modifier = Modifier.clip(CircleShape).clickable {
+                            navigateBack()
+                        },
                         painter = painterResource(R.drawable.arrow_back),
                         tint = Color.Black,
                         contentDescription = null

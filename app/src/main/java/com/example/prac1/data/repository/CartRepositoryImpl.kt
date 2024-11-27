@@ -1,18 +1,22 @@
 package com.example.prac1.data.repository
 
+import com.example.prac1.data.api.FlowerApi
+import com.example.prac1.data.api.model.OrderDataModel
+import com.example.prac1.data.api.requests.OrderCartItemRequest
+import com.example.prac1.data.api.requests.UpdateCartItemRequest
 import com.example.prac1.domain.mapper.CartItemMapper
 import com.example.prac1.domain.mapper.CartItemMapper.mapToDomain
 import com.example.prac1.domain.model.CartItem
 import com.example.prac1.domain.repository.CartRepository
 import com.example.prac1.domain.repository.TokenRepository
 import com.example.prac1.domain.repository.UserUidRepository
-import com.example.prac1.data.api.FlowerApi
-import com.example.prac1.data.api.requests.UpdateCartItemRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.sql.Timestamp
+import java.util.UUID
 import javax.inject.Inject
 
 class CartRepositoryImpl @Inject constructor(
@@ -25,6 +29,19 @@ class CartRepositoryImpl @Inject constructor(
 
     init {
         loadCartItems()
+    }
+
+    override suspend fun createOrder(totalPrice: Double, timestamp: Timestamp): OrderDataModel? {
+        val uid = userUidRepository.getUserUid()
+        return if(uid != null) {
+            OrderDataModel(
+                id = UUID.randomUUID().toString(),
+                user_id = uid,
+                total_price = totalPrice,
+                created_at = timestamp,
+                address = ""
+            )
+        } else null
     }
 
     private fun loadCartItems(onComplete: (Boolean) -> Unit = {}) {
@@ -75,7 +92,7 @@ class CartRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun updateCartItemQuantity(itemId: String, newQuantity: Int) {
+    override fun updateCartItemQuantity(itemId: String, newQuantity: Int, onComplete: (Boolean) -> Unit) {
         ioScope.launch {
             tokenRepository.executeApiCall(
                 apiCall = {
@@ -85,7 +102,7 @@ class CartRepositoryImpl @Inject constructor(
                         updateCartItemRequest = UpdateCartItemRequest(newQuantity.toLong())
                     )
                 },
-                onSuccess = { loadCartItems() },
+                onSuccess = { loadCartItems(onComplete = onComplete) },
                 onError = {
                     // вывести что пользователь не авторизован
                 }
@@ -93,16 +110,57 @@ class CartRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun countFlowerInCart(flowerId: String): Int {
-        val cartItem = _cartItems.value.find { it.flowerId == flowerId }
-        return cartItem?.quantity ?: 0
+    override fun updateCartItemOrderId(
+        itemId: String,
+        orderId: String,
+        onComplete: (Boolean) -> Unit
+    ) {
+        ioScope.launch {
+            tokenRepository.executeApiCall(
+                apiCall = {
+                    api.orderCartItem(
+                        token = tokenRepository.createAuthHeader(),
+                        itemId = "eq.$itemId",
+                        orderCartItemRequest = OrderCartItemRequest(orderId)
+                    )
+                },
+                onSuccess = {
+                    loadCartItems(onComplete = onComplete)
+                }
+            )
+        }
     }
 
-    /*override fun removeItemFromCart(cartItem: CartItem) {
-        _cartItems.value = _cartItems.value.filter { it.flowerId != cartItem.flowerId }
+    override fun getCartItemByFlowerId(flowerId: String): CartItem? {
+        return _cartItems.value.find { it.flowerId == flowerId }
+    }
+
+    override fun removeItemFromCart(itemId: String, onComplete: (Boolean) -> Unit) {
+        ioScope.launch {
+            tokenRepository.executeApiCall(
+                apiCall = {
+                    api.deleteItemFromCart(tokenRepository.createAuthHeader(), "eq.$itemId")
+                },
+                onSuccess = {
+                    loadCartItems(onComplete = onComplete) },
+                onError = {
+                    // отправить в tokenRepository что пользователь не авторизован
+                }
+            )
+        }
     }
 
     override fun clearCart() {
-        _cartItems.value = emptyList()
-    }*/
+
+    }
+
+    override fun addOrder(order: OrderDataModel) {
+        ioScope.launch {
+            tokenRepository.executeApiCall(
+                apiCall = {
+                    api.addOrder(tokenRepository.createAuthHeader(), order)
+                }
+            )
+        }
+    }
 }

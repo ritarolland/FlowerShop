@@ -21,21 +21,23 @@ class DetailsViewModel @Inject constructor(
 
     private val _selectedItem = MutableStateFlow<Flower?>(null)
     val selectedItem = _selectedItem.asStateFlow()
-    private val _flowerCountInCart = MutableStateFlow<Int?>(null)
-    val flowerCountInCart = _flowerCountInCart.asStateFlow()
+    private val _cartItem = MutableStateFlow<CartItem?>(null)
+    val flowerCountInCart = _cartItem.asStateFlow()
 
     fun loadItemById(itemId: String) {
         viewModelScope.launch {
             val items = catalogRepository.getCatalogItems()
             items.collect { itemList ->
                 _selectedItem.value = itemList.find { it.id == itemId } ?: Flower()
-                updateFlowerCount()
+                updateCartItem()
             }
         }
     }
-    private suspend fun updateFlowerCount() {
-        _flowerCountInCart.emit(cartRepository.countFlowerInCart(_selectedItem.value?.id ?: ""))
+
+    private suspend fun updateCartItem() {
+        _cartItem.emit(cartRepository.getCartItemByFlowerId(_selectedItem.value?.id ?: ""))
     }
+
 
     fun clearSelectedItem() {
         _selectedItem.value = null
@@ -51,14 +53,14 @@ class DetailsViewModel @Inject constructor(
                     userId = uid,
                     quantity = 1
                 )
-                cartRepository.addItemToCart(cartItem){ success ->
+                cartRepository.addItemToCart(cartItem) { success ->
                     if (success) {
                         viewModelScope.launch {
-                            updateFlowerCount()
+                            updateCartItem()
                         }
                     } else {
                         viewModelScope.launch {
-                            updateFlowerCount()
+                            updateCartItem()
                         }
                     }
                 }
@@ -66,11 +68,30 @@ class DetailsViewModel @Inject constructor(
         }
     }
 
-    fun changeItemsQuantity() {
-
+    fun updateCartItemQuantity(itemId: String, newQuantity: Int) {
+        if (newQuantity == 0) {
+            deleteItemFromCart(itemId)
+        } else {
+            cartRepository.updateCartItemQuantity(
+                itemId,
+                newQuantity,
+                onComplete = { isSuccessful ->
+                    if (isSuccessful) {
+                        viewModelScope.launch {
+                            updateCartItem()
+                        }
+                    }
+                })
+        }
     }
 
-    fun deleteItemFromCart() {
-
+    private fun deleteItemFromCart(itemId: String) {
+        cartRepository.removeItemFromCart(itemId) { isSuccessful ->
+            if (isSuccessful) {
+                viewModelScope.launch {
+                    updateCartItem()
+                }
+            }
+        }
     }
 }
