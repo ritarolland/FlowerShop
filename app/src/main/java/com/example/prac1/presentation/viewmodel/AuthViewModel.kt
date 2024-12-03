@@ -2,13 +2,13 @@ package com.example.prac1.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.prac1.data.repository.AuthResult
 import com.example.prac1.domain.repository.AuthRepository
+import com.example.prac1.domain.repository.UserUidRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.example.prac1.data.repository.AuthResult
-import com.example.prac1.domain.repository.UserUidRepository
 
 class AuthViewModel @Inject constructor(private val authRepository: AuthRepository,
     private val uidRepository: UserUidRepository) : ViewModel() {
@@ -28,6 +28,15 @@ class AuthViewModel @Inject constructor(private val authRepository: AuthReposito
         _signInState.value = AuthResult.Loading
         viewModelScope.launch {
             val success = authRepository.signIn(email, password)
+            _signInState.value = AuthResult.Success(success)
+            checkAuthorization()
+        }
+    }
+
+    fun signUp(email: String, password: String) {
+        _signInState.value = AuthResult.Loading
+        viewModelScope.launch {
+            val success = authRepository.signUp(email, password)
             _signInState.value = AuthResult.Success(success)
             checkAuthorization()
         }

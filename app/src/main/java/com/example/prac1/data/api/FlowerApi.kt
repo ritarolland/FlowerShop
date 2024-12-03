@@ -46,6 +46,10 @@ interface FlowerApi {
     @Headers("Content-Type: application/json")
     suspend fun signIn(@Body loginRequest: LoginRequest): Response<LoginResponse>
 
+    @POST("/auth/v1/signup")
+    @Headers("Content-Type: application/json")
+    suspend fun signUp(@Body loginRequest: LoginRequest): Response<LoginResponse>
+
     @POST("/auth/v1/token?grant_type=refresh_token")
     @Headers("Content-Type: application/json")
     suspend fun refreshToken(@Body refreshTokenRequest: RefreshTokenRequest): Response<RefreshTokenResponse>
@@ -54,6 +58,12 @@ interface FlowerApi {
     suspend fun getUser(
         @Header("Authorization") token: String
     ): Response<UserIdResponse>
+
+    @POST("/rest/v1/users")
+    suspend fun addUser(
+        @Header("Authorization") token: String,
+        @Body user: UserInfoDataModel
+    ): Response<Unit>
 
     @GET("/rest/v1/users")
     suspend fun getUserInfo(

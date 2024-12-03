@@ -32,7 +32,9 @@ fun AuthNavHost(
             RegisterScreen(
                 onNavigateToAuth = {
                     navController.popBackStack(Screens.Auth.route, inclusive = false)
-                }
+                },
+                authViewModel = authViewModel,
+                paddingValues = paddingValues
             )
         }
     }

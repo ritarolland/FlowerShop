@@ -1,9 +1,9 @@
 package com.example.prac1.data.repository
 
-import com.example.prac1.domain.repository.AuthRepository
-import com.example.prac1.domain.repository.TokenRepository
 import com.example.prac1.data.api.FlowerApi
 import com.example.prac1.data.api.requests.LoginRequest
+import com.example.prac1.domain.repository.AuthRepository
+import com.example.prac1.domain.repository.TokenRepository
 
 class AuthRepositoryImpl(
     private val api: FlowerApi,
@@ -20,6 +20,20 @@ class AuthRepositoryImpl(
                 tokenRepository.setToken(accessToken, expiresIn)
                 tokenRepository.setRefreshToken(refreshToken)
                 true
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    override suspend fun signUp(email: String, password: String): Boolean {
+        return try {
+            val response = api.signUp(LoginRequest(email, password))
+            if (response.isSuccessful) {
+                val result = signIn(email, password)
+                result
             } else {
                 false
             }

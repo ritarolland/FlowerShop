@@ -33,10 +33,11 @@ import com.example.prac1.R
 import com.example.prac1.data.repository.AuthResult
 import com.example.prac1.presentation.viewmodel.AuthViewModel
 
+
 @Composable
-fun AuthScreen(
+fun RegisterScreen(
     authViewModel: AuthViewModel,
-    onNavigateToRegister: () -> Unit,
+    onNavigateToAuth: () -> Unit,
     paddingValues: PaddingValues
 ) {
     val context = LocalContext.current
@@ -83,7 +84,7 @@ fun AuthScreen(
             Button(
                 onClick = {
                     if (email.isNotEmpty() && password.isNotEmpty()) {
-                        authViewModel.signIn(email = email, password = password)
+                        authViewModel.signUp(email = email, password = password)
                     } else {
                         Toast.makeText(context, "Fill in all fields", Toast.LENGTH_SHORT).show()
                     }
@@ -91,7 +92,7 @@ fun AuthScreen(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = signInState == null
             ) {
-                Text(text = if (signInState is AuthResult.Loading) "Loading..." else "Войти")
+                Text(text = if (signInState is AuthResult.Loading) "Loading..." else "Sign up")
             }
 
             if (signInState is AuthResult.Error) {
@@ -105,8 +106,8 @@ fun AuthScreen(
             } else if (signInState is AuthResult.Success)
                 Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
             Spacer(modifier = Modifier.padding(32.dp))
-            Text(text = "Haven't got an account? Sign up now",
-                modifier = Modifier.clickable { onNavigateToRegister() })
+            Text(text = "Already have an account? Sign in now",
+                modifier = Modifier.clickable { onNavigateToAuth() })
         }
     }
 }

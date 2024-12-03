@@ -5,6 +5,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -19,11 +20,12 @@ fun BottomNavigationBar(
     catalogViewModel: CatalogViewModel
 ) {
     var navigationSelectedItem by remember { mutableIntStateOf(0) }
+    val currentRoute = navController.currentBackStackEntryFlow.collectAsState(initial = null).value?.destination?.route
     NavigationBar {
         BottomNavigationItem().bottomNavigationItems()
             .forEachIndexed { index, navigationItem ->
                 NavigationBarItem(
-                    selected = index == navigationSelectedItem,
+                    selected = currentRoute == navigationItem.route,
                     label = {
                         Text(navigationItem.label)
                     },
