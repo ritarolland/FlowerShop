@@ -9,17 +9,22 @@ import com.example.prac1.data.api.requests.LoginRequest
 import com.example.prac1.data.api.requests.OrderCartItemRequest
 import com.example.prac1.data.api.requests.RefreshTokenRequest
 import com.example.prac1.data.api.requests.UpdateCartItemRequest
+import com.example.prac1.data.api.responses.ImageUploadResponse
 import com.example.prac1.data.api.responses.LoginResponse
 import com.example.prac1.data.api.responses.RefreshTokenResponse
 import com.example.prac1.data.api.responses.UserIdResponse
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
+import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Part
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface FlowerApi {
@@ -153,4 +158,23 @@ interface FlowerApi {
         @Header("Authorization") token: String,
         @Body orderDataModel: OrderDataModel
     ) : Response<Unit>
+
+    @Multipart
+    @POST("storage/v1/object/userImages/{file_name}")
+    suspend fun uploadFile(
+        @Header("Authorization") token: String,
+        @Path("file_name") fileName: String,
+        @Part file: MultipartBody.Part
+    ): Response<ImageUploadResponse>
+
+    @POST("/rest/v1/users")
+    @Headers(
+        "Content-Type: application/json",
+        "Prefer: return=minimal"
+    )
+    suspend fun addUserInfo(
+        @Header("Authorization") token: String,
+        @Body userInfoDataModel: UserInfoDataModel
+    ) : Response<Unit>
+
 }

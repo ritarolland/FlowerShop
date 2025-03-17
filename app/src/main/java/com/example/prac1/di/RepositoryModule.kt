@@ -77,14 +77,14 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideAuthRepository(api: FlowerApi, tokenRepository: TokenRepository): AuthRepository {
-        return AuthRepositoryImpl(api, tokenRepository)
+    fun provideAuthRepository(api: FlowerApi, tokenRepository: TokenRepository, uidRepository: UserUidRepository): AuthRepository {
+        return AuthRepositoryImpl(api, tokenRepository, uidRepository)
     }
 
     @Provides
     @Singleton
-    fun provideProfileRepository(api: FlowerApi, uidRepository: UserUidRepository): ProfileRepository {
-        return ProfileRepositoryImpl(api, uidRepository)
+    fun provideProfileRepository(api: FlowerApi, uidRepository: UserUidRepository, tokenRepository: TokenRepository): ProfileRepository {
+        return ProfileRepositoryImpl(api, uidRepository, tokenRepository)
     }
 
     @Provides

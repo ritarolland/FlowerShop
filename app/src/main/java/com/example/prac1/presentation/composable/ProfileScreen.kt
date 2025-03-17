@@ -16,6 +16,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -39,6 +40,13 @@ fun ProfileScreen(
 ) {
     val userInfo by viewModel.userInfo.collectAsState(null)
     val context = LocalContext.current
+
+    viewModel.fetchProfileUrl()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchProfileUrl()
+    }
+
     Scaffold(
         modifier = Modifier.padding(16.dp),
     ) { paddingValues ->

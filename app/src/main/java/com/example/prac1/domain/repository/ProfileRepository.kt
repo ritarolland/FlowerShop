@@ -5,4 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface ProfileRepository {
     suspend fun getUserInfo(): Flow<UserInfoDataModel?>
+    fun fetchInfo()
 }

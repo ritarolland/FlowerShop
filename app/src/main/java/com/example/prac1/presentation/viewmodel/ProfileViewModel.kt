@@ -30,6 +30,10 @@ class ProfileViewModel @Inject constructor(private val profileRepository: Profil
         }
     }
 
+    fun fetchProfileUrl() {
+        profileRepository.fetchInfo()
+    }
+
     fun logOut() {
         userUidRepository.clearUid()
     }

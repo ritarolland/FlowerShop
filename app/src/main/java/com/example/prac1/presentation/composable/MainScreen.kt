@@ -35,6 +35,12 @@ fun MainScreen(
     orderViewModel: OrderViewModel
 ) {
     val isAuthorized by authViewModel.isAuthorized.collectAsState()
+
+    LaunchedEffect(isAuthorized) {
+        if (isAuthorized == true)
+            profileViewModel.fetchProfileUrl()
+    }
+
     if (isAuthorized == false) {
         Scaffold { paddingValues ->
             AuthNavHost(
