@@ -1,37 +1,50 @@
 package com.example.prac1.presentation.composable
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.prac1.R
@@ -40,8 +53,15 @@ import com.example.prac1.domain.model.Flower
 import com.example.prac1.presentation.viewmodel.DetailsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
+@ExperimentalFoundationApi
 @Composable
-fun DetailsScreen(flowerId: String?, detailsViewModel: DetailsViewModel, navigateBack:() -> Unit) {
+fun DetailsScreen(
+    flowerId: String?,
+    isFavorite: (id: String) -> Boolean,
+    detailsViewModel: DetailsViewModel,
+    navigateBack: () -> Unit,
+    onFavourite: (id: String) -> Unit
+) {
     val currentFlower: Flower? by detailsViewModel.selectedItem.collectAsState(Flower())
     val cartItem: CartItem? by detailsViewModel.flowerCountInCart.collectAsState(null)
     LaunchedEffect(flowerId) {
@@ -54,7 +74,153 @@ fun DetailsScreen(flowerId: String?, detailsViewModel: DetailsViewModel, navigat
             detailsViewModel.clearSelectedItem()
         }
     }
+
     Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {},
+                navigationIcon = {
+                    Icon(imageVector = ImageVector.vectorResource(R.drawable.left_icon),
+                        contentDescription = null,
+                        tint = colorResource(R.color.Neutral20),
+                        modifier = Modifier
+                            .clip(
+                                CircleShape
+                            )
+                            .size(42.dp)
+                            .clickable {
+                                navigateBack()
+                            })
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
+            )
+        },
+        containerColor = colorResource(R.color.Neutral20)
+    ) { paddingValues ->
+        if (currentFlower == null) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
+            val flower = currentFlower as Flower
+            val scrollState = rememberScrollState()
+            val scrollProgress = (scrollState.value / 1000f).coerceIn(0f, 1f)
+            Box(modifier = Modifier.fillMaxSize()) {
+                GlideImage(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f)
+                        .align(Alignment.TopCenter),
+                    imageUrl = flower.imageUrl,
+                    description = flower.name,
+                    alpha = 1f - scrollProgress
+                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                        .offset(y = (LocalConfiguration.current.screenWidthDp - 24).dp)
+                        .background(
+                            color = colorResource(R.color.Neutral10),
+                            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+                        )
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Text(
+                        text = flower.name.uppercase(),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = colorResource(R.color.Text)
+                    )
+                    Text(
+                        text = "₽${flower.price}",
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(R.color.Text)
+                    )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        if (cartItem == null) {
+                            CustomButtonFilled(
+                                onClick = {
+                                    detailsViewModel.addItemToCart()
+                                },
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .heightIn(48.dp)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.add_to_cart),
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        } else {
+                            QuantitySelectionCard(
+                                quantity = cartItem!!.quantity,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .heightIn(48.dp)
+                            ) { quantity ->
+                                detailsViewModel.updateCartItemQuantity(
+                                    itemId = cartItem!!.id,
+                                    newQuantity = quantity
+                                )
+                            }
+                        }
+
+                        var favorite by remember { mutableStateOf(isFavorite(flower.id)) }
+                        CustomButtonOutlined(
+                            onClick = {
+                                onFavourite(flower.id)
+                                favorite = !favorite
+                            },
+                            modifier = Modifier.heightIn(48.dp)
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(20.dp),
+                                imageVector = if (favorite) ImageVector.vectorResource(R.drawable.heart_filled)
+                                else ImageVector.vectorResource(R.drawable.heart),
+                                contentDescription = null,
+                                tint = colorResource(R.color.Primary)
+                            )
+                        }
+                    }
+                    HorizontalDivider(
+                        modifier = Modifier.fillMaxWidth(),
+                        thickness = 1.dp,
+                        color = colorResource(R.color.Neutral40)
+                    )
+                    Text(
+                        text = stringResource(R.string.product_description),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(R.color.Text)
+                    )
+                    Text(
+                        //text = flower.description,
+                        text = "The tiny daisy-like flowers of German chamomile have white collars circling raised, cone-shaped, yellow centers and are less than an inch wide, growing on long, thin, light green stems. Sometimes chamomile grows wild and close to the ground, but you can also find it bordering herb gardens. It can reach up to 3 feet high. German chamomile is native to Europe, north Africa, and some parts of Asia. It is closely related to Roman chamomile (Chamaemelum nobile), which, although less commonly used, has many of the same medicinal properties.The tiny daisy-like flowers of German chamomile have white collars circling raised, cone-shaped, yellow centers and are less than an inch wide, growing on long, thin, light green stems. Sometimes chamomile grows wild and close to the ground, but you can also find it bordering herb gardens. It can reach up to 3 feet high. German chamomile is native to Europe, north Africa, and some parts of Asia. It is closely related to Roman chamomile (Chamaemelum nobile), which, although less commonly used, has many of the same medicinal properties.The tiny daisy-like flowers of German chamomile have white collars circling raised, cone-shaped, yellow centers and are less than an inch wide, growing on long, thin, light green stems. Sometimes chamomile grows wild and close to the ground, but you can also find it bordering herb gardens. It can reach up to 3 feet high. German chamomile is native to Europe, north Africa, and some parts of Asia. It is closely related to Roman chamomile (Chamaemelum nobile), which, although less commonly used, has many of the same medicinal properties.The tiny daisy-like flowers of German chamomile have white collars circling raised, cone-shaped, yellow centers and are less than an inch wide, growing on long, thin, light green stems. Sometimes chamomile grows wild and close to the ground, but you can also find it bordering herb gardens. It can reach up to 3 feet high. German chamomile is native to Europe, north Africa, and some parts of Asia. It is closely related to Roman chamomile (Chamaemelum nobile), which, although less commonly used, has many of the same medicinal properties.",
+                        fontSize = 14.sp,
+                        color = colorResource(R.color.Text)
+                    )
+                    Spacer(modifier = Modifier.padding(200.dp))
+
+                }
+
+            }
+        }
+    }
+
+
+    /*Scaffold(
         modifier = Modifier.padding(16.dp),
         topBar = {
             CenterAlignedTopAppBar(
@@ -142,5 +308,5 @@ fun DetailsScreen(flowerId: String?, detailsViewModel: DetailsViewModel, navigat
                 Spacer(modifier = Modifier.padding(8.dp))
             }
         }
-    }
+    }*/
 }

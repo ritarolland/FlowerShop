@@ -13,7 +13,6 @@
     <string name="sign_up_now"><u>Sign up now</u></string>
     <string name="flowery">Flowery</string>
     <string name="profile">Профиль</string>
-    <string name="add_to_cart">Add to cart</string>
     <string name="favourites">Favourites</string>
 
 
@@ -22,5 +21,7 @@
     <string name="my_cart">My Cart</string>
     <string name="my_account">My Account</string>
     <string name="deliver_to">Deliver to</string>
+    <string name="add_to_cart">Add to Cart</string>
+    <string name="product_description">Product Description</string>
 
 </resources>

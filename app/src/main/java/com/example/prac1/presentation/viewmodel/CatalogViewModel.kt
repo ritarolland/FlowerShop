@@ -59,4 +59,8 @@ class CatalogViewModel@Inject constructor(
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query // Обновляем запрос поиска
     }
+
+    fun isFavorite(id: String): Boolean {
+        return id in favourites.value
+    }
 }

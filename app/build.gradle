@@ -9,12 +9,13 @@ plugins {
 
 android {
     namespace 'com.example.prac1'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.example.prac1"
         minSdk 24
-        targetSdk 34
+        //noinspection EditedTargetSdkVersion
+        targetSdk 35
         versionCode 1
         versionName "1.0"
 
@@ -57,6 +58,9 @@ dependencies {
     //Glide
     implementation libs.glide
     ksp libs.ksp
+    //Coil
+    implementation("io.coil-kt.coil3:coil-compose:3.1.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.1.0")
     //Compose
     implementation platform(libs.androidx.compose.bom)
     androidTestImplementation platform(libs.androidx.compose.bom)
