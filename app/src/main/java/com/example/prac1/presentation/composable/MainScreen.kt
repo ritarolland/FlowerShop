@@ -1,11 +1,15 @@
 package com.example.prac1.presentation.composable
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.prac1.presentation.navigation.AppNavHost
 import com.example.prac1.presentation.navigation.AuthNavHost

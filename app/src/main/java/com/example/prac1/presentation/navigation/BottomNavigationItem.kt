@@ -1,32 +1,28 @@
 package com.example.prac1.presentation.navigation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.ui.graphics.vector.ImageVector
+import com.example.prac1.R
 
 
 data class BottomNavigationItem(
-    val label: String = "",
-    val icon: ImageVector = Icons.Filled.Home,
+    val label: Int = 0,
+    val icon: Int = 0,
     val route: String = ""
 ) {
     fun bottomNavigationItems(): List<BottomNavigationItem> {
         return listOf(
             BottomNavigationItem(
-                label = "Catalog",
-                icon = Icons.Filled.Home,
+                label = R.string.home,
+                icon = R.drawable.home_icon,
                 route = Screens.Catalog.route
             ),
             BottomNavigationItem(
-                label = "Cart",
-                icon = Icons.Filled.ShoppingCart,
+                label = R.string.my_cart,
+                icon = R.drawable.cart_icon,
                 route = Screens.Cart.route
             ),
             BottomNavigationItem(
-                label = "Profile",
-                icon = Icons.Filled.AccountCircle,
+                label = R.string.my_account,
+                icon = R.drawable.user_icon,
                 route = Screens.Profile.route
             ),
         )

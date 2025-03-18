@@ -8,4 +8,16 @@
     <color name="purple">#976BD6</color>
     <color name="light_purple">#EDD3F9</color>
     <color name="yellow">#F2F766</color>
+
+
+
+    <color name="Text">#404040</color>
+    <color name="Primary">#9747FF</color>
+    <color name="Neutral50">#C2C2C2</color>
+    <color name="Neutral60">#9E9E9E</color>
+    <color name="Neutral10">#FFFFFF</color>
+    <color name="Neutral20">#F5F5F5</color>
+    <color name="Neutral30">#EDEDED</color>
+    <color name="Neutral40">#E0E0E0</color>
+
 </resources>
