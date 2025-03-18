@@ -20,6 +20,8 @@ import com.example.prac1.R
 fun CustomButtonFilled(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    containerColor: Color = colorResource(R.color.Primary),
     content: @Composable () -> Unit
 ) {
     Button(
@@ -27,10 +29,11 @@ fun CustomButtonFilled(
         modifier = modifier,
         contentPadding = PaddingValues(12.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(R.color.Primary),
+            containerColor = containerColor,
             contentColor = colorResource(R.color.Neutral10)
         ),
         shape = RoundedCornerShape(8.dp),
+        enabled = enabled
     ) {
         content()
     }
@@ -40,6 +43,7 @@ fun CustomButtonFilled(
 fun CustomButtonOutlined(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    paddingValues: PaddingValues = PaddingValues(12.dp),
     content: @Composable () -> Unit
 ) {
     Button(
@@ -51,12 +55,12 @@ fun CustomButtonOutlined(
                 color = colorResource(R.color.Primary)
             )
             .defaultMinSize(minWidth = 20.dp, minHeight = 20.dp),
-        contentPadding = PaddingValues(12.dp),
+        contentPadding = paddingValues,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,
             contentColor = colorResource(R.color.Primary)
         ),
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(8.dp)
     ) {
         content()
     }

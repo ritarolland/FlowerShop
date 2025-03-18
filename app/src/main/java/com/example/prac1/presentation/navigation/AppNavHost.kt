@@ -64,22 +64,28 @@ fun AppNavHost(
                 navController.popBackStack()
             }, onItemClick = { flower ->
                 navController.navigate("details/${flower.id}")
-            })
+            },
+                onFavorite = { id -> catalogViewModel.toggleIsFavourite(id) },
+                isFavorite = { id -> catalogViewModel.isFavorite(id) })
         }
         //Details
         composable("details/{flowerId}") { backStackEntry ->
             val flowerId = backStackEntry.arguments?.getString("flowerId")
             DetailsScreen(
                 flowerId = flowerId,
-                isFavorite = {id -> catalogViewModel.isFavorite(id)},
+                isFavorite = { id -> catalogViewModel.isFavorite(id) },
                 detailsViewModel = detailsViewModel,
                 navigateBack = { navController.popBackStack() },
                 onFavourite = { id -> catalogViewModel.toggleIsFavourite(id) })
         }
         composable(Screens.Cart.route) {
-            CartScreen(cartViewModel = cartViewModel) { flower ->
-                navController.navigate("details/${flower.id}")
-            }
+            CartScreen(
+                cartViewModel = cartViewModel,
+                onFavorite = { id -> catalogViewModel.toggleIsFavourite(id) },
+                isFavorite = { id -> catalogViewModel.isFavorite(id) },
+                onItemClick = { flower ->
+                    navController.navigate("details/${flower.id}")
+                })
         }
         composable(Screens.Profile.route) {
             ProfileScreen(

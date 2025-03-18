@@ -1,42 +1,51 @@
 package com.example.prac1.presentation.composable
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.prac1.R
 import com.example.prac1.domain.model.CartItem
 import com.example.prac1.domain.model.Flower
@@ -45,7 +54,12 @@ import java.sql.Timestamp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CartScreen(cartViewModel: CartViewModel, onItemClick:(Flower) -> Unit) {
+fun CartScreen(
+    cartViewModel: CartViewModel,
+    onItemClick: (Flower) -> Unit,
+    onFavorite: (id: String) -> Unit,
+    isFavorite: (id: String) -> Boolean,
+) {
     val cartItems by cartViewModel.cartItems.collectAsState(emptyList())
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -54,58 +68,87 @@ fun CartScreen(cartViewModel: CartViewModel, onItemClick:(Flower) -> Unit) {
     val selectedItems by cartViewModel.selectedItems.collectAsState(emptyList())
 
     Scaffold(
-        modifier = Modifier
-            .padding(16.dp),
+        containerColor = colorResource(R.color.Neutral20),
         topBar = {
-            CenterAlignedTopAppBar(
+            TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
+                    containerColor = Color.Transparent
                 ),
                 title = {
-                    Text(modifier = Modifier.padding(bottom = 4.dp),
-                        text = stringResource(id = R.string.cart))
+                    Text(
+                        modifier = Modifier.height(30.dp),
+                        text = stringResource(R.string.my_cart),
+                        color = colorResource(R.color.Text),
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 },
                 actions = {
-                    Box(modifier = Modifier
-                        .then(
-                            if (isSelectionMode) {
-                                Modifier.padding(end = 4.dp)
-                            } else {
-                                Modifier.padding(end = 16.dp)
-                            }
-                        )
-                        .clip(RoundedCornerShape(16.dp))
-                        .clickable {
-                            cartViewModel.toggleSelectionMode()
-                        }){
-                    Text(
-                        text = if (isSelectionMode) "Done" else "Select",
-                        modifier = Modifier
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
-                    )}
                     if (isSelectionMode) {
-                        Box(modifier = Modifier
-                            .padding(end = 16.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .clickable(enabled = selectedItems.isNotEmpty()) {
-                                cartViewModel.deleteSelectedCartItems()
-                            })
-                        {
+                        Icon(
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                                .size(30.dp)
+                                .clickable(
+                                    enabled = selectedItems.isNotEmpty(),
+                                    interactionSource = null,
+                                    indication = null
+                                ) {
+                                    cartViewModel.deleteSelectedCartItems()
+                                },
+                            imageVector = ImageVector.vectorResource(R.drawable.trash_icon),
+                            contentDescription = null,
+                            tint = if (selectedItems.isNotEmpty()) colorResource(R.color.Primary)
+                            else colorResource(R.color.Neutral60)
+                        )
+                        CustomButtonOutlined(
+                            modifier = Modifier
+                                .padding(end = 16.dp)
+                                .height(30.dp),
+                            paddingValues = PaddingValues(vertical = 2.dp, horizontal = 12.dp),
+                            onClick = {
+                                cartViewModel.toggleSelectionMode()
+                            }
+                        ) {
                             Text(
-                                text = "Delete",
-                                color = if (selectedItems.isNotEmpty()) Color.Red else Color.Gray,
-                                modifier = Modifier
-                                    .padding(horizontal = 8.dp, vertical = 4.dp)
-                            )}
+                                text = stringResource(R.string.done),
+                                color = colorResource(R.color.Primary),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    } else {
+                        CustomButtonOutlined(
+                            modifier = Modifier
+                                .height(30.dp)
+                                .padding(end = 16.dp),
+                            paddingValues = PaddingValues(vertical = 2.dp, horizontal = 12.dp),
+                            onClick = {
+                                cartViewModel.toggleSelectionMode()
+                            }
+                        ) {
+                            Text(
+                                text = stringResource(R.string.select),
+                                color = colorResource(R.color.Primary),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 },
                 scrollBehavior = scrollBehavior,
             )
         }
     ) { paddingValues ->
-        Box {
-            LazyColumn(modifier = Modifier.padding(paddingValues)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+        ) {
+            LazyColumn(
+                modifier = Modifier.padding(paddingValues),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
                 items(cartItems.size) { i ->
                     val flower = cartViewModel.getItemById(cartItems[i].flowerId)
                     flower?.let {
@@ -120,34 +163,49 @@ fun CartScreen(cartViewModel: CartViewModel, onItemClick:(Flower) -> Unit) {
                             },
                             onQuantityChange = { quantity ->
                                 cartViewModel.updateCartItemQuantity(cartItems[i].id, quantity)
-                            }
+                            },
+                            onFavorite = onFavorite,
+                            isFavorite = isFavorite
                         )
                     }
                 }
                 item { Spacer(modifier = Modifier.padding(32.dp)) }
             }
-            Button(
+            CustomButtonFilled(
                 onClick = {
                     cartViewModel.placeOrder(Timestamp(System.currentTimeMillis()))
                 },
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(horizontal = 8.dp)
                     .padding(bottom = 64.dp)
+                    .height(48.dp)
+                    .align(Alignment.BottomCenter)
                     .fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 4.dp,
-                    pressedElevation = 8.dp,
-                    disabledElevation = 0.dp
-                )
+                enabled = totalCost > 0,
+                containerColor = if (totalCost > 0) colorResource(R.color.Primary)
+                else colorResource(R.color.Neutral60)
             ) {
-                Text(text = "Order, total cost: $totalCost")
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = stringResource(R.string.order),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(R.color.Neutral10)
+                    )
+                    Text(
+                        text = "₽$totalCost",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(R.color.Neutral10)
+                    )
+                }
             }
         }
     }
 }
-
 
 @Composable
 fun CartItemCard(
@@ -157,64 +215,95 @@ fun CartItemCard(
     isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     onClick: () -> Unit,
-    onQuantityChange: (Int) -> Unit
+    onQuantityChange: (Int) -> Unit,
+    onFavorite: (id: String) -> Unit,
+    isFavorite: (id: String) -> Boolean,
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp, horizontal = 8.dp)
             .clickable(onClick = onClick),
-        elevation = CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = colorResource(R.color.Neutral10)
+        )
     ) {
-        Box {
-            Row(
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            GlideImage(
+                imageUrl = flower.imageUrl,
+                description = flower.name,
                 modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxSize()
-            ) {
-                GlideImage(
-                    imageUrl = flower.imageUrl,
-                    description = flower.name,
+                    .width(100.dp)
+                    .aspectRatio(1f)
+                    .clip(RoundedCornerShape(8.dp))
+            )
+            Box(modifier = Modifier.height(100.dp)) {
+                Row(
                     modifier = Modifier
-                        .width(128.dp)
-                        .aspectRatio(1f)
-                        .clip(RoundedCornerShape(8.dp)),
-                )
-                Column(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxHeight()
-                        .weight(1f)
+                        .fillMaxWidth()
+                        .align(Alignment.TopStart),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
-                        text = (flower.price * cartItem.quantity).toString(),
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
-                        text = flower.name,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Spacer(modifier = Modifier.padding(8.dp))
-                    QuantitySelectionCard(
-                        quantity = cartItem.quantity,
-                        onQuantityChange = onQuantityChange
-                    )
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = flower.name,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Normal,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            color = colorResource(R.color.Text)
+                        )
+                        Text(
+                            text = "₽${flower.price * cartItem.quantity}",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            color = colorResource(R.color.Text)
+                        )
+                    }
+                    if (isSelectionMode) {
+                        Checkbox(
+                            modifier = Modifier.offset(y = (-16).dp, x = 16.dp),
+                            checked = isChecked,
+                            onCheckedChange = onCheckedChange,
+                            colors = CheckboxDefaults.colors(
+                                uncheckedColor = colorResource(R.color.Neutral60),
+                                checkedColor = colorResource(R.color.Primary),
+                            )
+                        )
+                    }
                 }
-            }
-            if (isSelectionMode) {
-                Checkbox(
-                    checked = isChecked,
-                    onCheckedChange = onCheckedChange,
+                var favorite by remember { mutableStateOf(isFavorite(flower.id)) }
+                Icon(
                     modifier = Modifier
-                        .padding(8.dp)
-                        .align(Alignment.TopEnd)
+                        .size(20.dp)
+                        .align(Alignment.BottomStart)
+                        .offset(y = (-6).dp)
+                        .clickable(interactionSource = null, indication = null) {
+                            onFavorite(flower.id)
+                            favorite = !favorite
+                        },
+                    imageVector = if (favorite) ImageVector.vectorResource(R.drawable.heart_filled)
+                    else ImageVector.vectorResource(R.drawable.heart),
+                    contentDescription = null,
+                    tint = if (favorite) colorResource(R.color.Primary) else colorResource(R.color.Neutral60)
+                )
+                QuantitySelectionCard(
+                    modifier = Modifier
+                        .height(32.dp)
+                        .width(105.dp)
+                        .align(Alignment.BottomEnd),
+                    quantity = cartItem.quantity,
+                    onQuantityChange = onQuantityChange
                 )
             }
         }

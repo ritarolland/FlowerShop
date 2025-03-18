@@ -1,9 +1,13 @@
 package com.example.prac1.presentation.composable
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -11,15 +15,21 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.prac1.R
 import com.example.prac1.domain.model.Flower
 import com.example.prac1.presentation.viewmodel.FavouritesViewModel
@@ -33,38 +43,51 @@ fun FavouritesScreen(
 ) {
     val favouriteFlowers by favouritesViewModel.favouriteFlowers.collectAsState(emptyList())
     Scaffold(
-        modifier = Modifier.padding(16.dp),
+        containerColor = colorResource(R.color.Neutral20),
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(text = stringResource(R.string.favourites))
+                    Text(
+                        modifier = Modifier.height(30.dp),
+                        text = stringResource(R.string.favorites),
+                        color = colorResource(R.color.Text),
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 },
                 navigationIcon = {
-                    Icon(
-                        modifier = Modifier.clip(CircleShape).clickable {
-                            navigateBack()
-                        },
-                        painter = painterResource(R.drawable.arrow_back),
-                        tint = Color.Black,
-                        contentDescription = null
-                    )
-                }
+                    Icon(imageVector = ImageVector.vectorResource(R.drawable.left_icon),
+                        contentDescription = null,
+                        tint = colorResource(R.color.Text),
+                        modifier = Modifier
+                            .clip(
+                                CircleShape
+                            )
+                            .size(42.dp)
+                            .clickable {
+                                navigateBack()
+                            })
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
             )
         }
     ) { paddingValues ->
         LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
             modifier = Modifier
-                .padding(top = 16.dp)
-                .padding(paddingValues)
+                .padding(horizontal = 16.dp)
+                .padding(paddingValues),
+            columns = GridCells.Fixed(2),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            item(span = { GridItemSpan(2) }) { Spacer(modifier = Modifier.padding(2.dp)) }
             items(favouriteFlowers.size) { i ->
                 FlowerCard(flower = favouriteFlowers[i],
                     isFavourite = true,
                     onClick = { onItemClick(favouriteFlowers[i]) },
                     onFavourite = { favouritesViewModel.toggleIsFavourite(favouriteFlowers[i].id) })
             }
-            item { Spacer(modifier = Modifier.padding(8.dp)) }
+            item(span = { GridItemSpan(2) }) { Spacer(modifier = Modifier.padding(2.dp)) }
         }
     }
 }

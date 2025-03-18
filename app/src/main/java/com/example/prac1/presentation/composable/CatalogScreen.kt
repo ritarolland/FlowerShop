@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -127,8 +128,7 @@ fun CatalogScreen(catalogViewModel: CatalogViewModel, onItemClick: (Flower) -> U
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                item { Spacer(modifier = Modifier.padding(2.dp)) }
-                item { Spacer(modifier = Modifier.padding(2.dp)) }
+                item(span = { GridItemSpan(2) }) { Spacer(modifier = Modifier.padding(2.dp)) }
                 items(catalogItems.size) { i ->
                     FlowerCard(flower = catalogItems[i],
                         isFavourite = catalogItems[i].id in favourites,
