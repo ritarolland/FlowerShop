@@ -43,14 +43,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.prac1.R
 import com.example.prac1.data.repository.AuthResult
+import com.example.prac1.data.repository.AuthState
 import com.example.prac1.presentation.viewmodel.AuthViewModel
 
 
 @Composable
 fun RegisterScreen(
     authViewModel: AuthViewModel,
-    onNavigateToAuth: () -> Unit,
-    paddingValues: PaddingValues
+    onNavigateToAuth: () -> Unit
 ) {
     val context = LocalContext.current
     var email by remember { mutableStateOf("") }
@@ -64,7 +64,7 @@ fun RegisterScreen(
         }
     )
     Scaffold(
-        modifier = Modifier.padding(paddingValues)
+
     ) { paddingValue ->
         Column(
             modifier = Modifier
@@ -125,10 +125,10 @@ fun RegisterScreen(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = signInState == null
             ) {
-                Text(text = if (signInState is AuthResult.Loading) "Loading..." else "Sign up")
+                Text(text = if (signInState is AuthState.Loading) "Loading..." else "Sign up")
             }
 
-            if (signInState is AuthResult.Error) {
+            if (signInState is AuthState.Error) {
                 val error = (signInState as AuthResult.Error).exception.message
                 Text(
                     text = error ?: "Неизвестная ошибка",
@@ -136,7 +136,7 @@ fun RegisterScreen(
                     modifier = Modifier.padding(top = 16.dp)
                 )
 
-            } else if (signInState is AuthResult.Success)
+            } else if (signInState is AuthState.Success)
                 Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
             Spacer(modifier = Modifier.padding(32.dp))
             Text(text = "Already have an account? Sign in now",

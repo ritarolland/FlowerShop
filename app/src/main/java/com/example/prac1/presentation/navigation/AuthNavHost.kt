@@ -12,8 +12,7 @@ import com.example.prac1.presentation.viewmodel.AuthViewModel
 @Composable
 fun AuthNavHost(
     navController: NavHostController,
-    authViewModel: AuthViewModel,
-    paddingValues: PaddingValues
+    authViewModel: AuthViewModel
 ) {
     NavHost(
         navController = navController,
@@ -21,7 +20,6 @@ fun AuthNavHost(
     ) {
         composable(Screens.Auth.route) {
             AuthScreen(
-                paddingValues = paddingValues,
                 authViewModel = authViewModel,
                 onNavigateToRegister = {
                     navController.navigate(Screens.Register.route)
@@ -33,8 +31,7 @@ fun AuthNavHost(
                 onNavigateToAuth = {
                     navController.popBackStack(Screens.Auth.route, inclusive = false)
                 },
-                authViewModel = authViewModel,
-                paddingValues = paddingValues
+                authViewModel = authViewModel
             )
         }
     }

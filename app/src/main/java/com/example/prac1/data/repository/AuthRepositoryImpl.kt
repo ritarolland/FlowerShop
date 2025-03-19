@@ -56,7 +56,7 @@ class AuthRepositoryImpl(
         }
     }
 
-     override suspend fun signIn(email: String, password: String): Boolean {
+     override suspend fun signIn(email: String, password: String): AuthState {
         return try {
             val response = api.signIn(LoginRequest(email, password))
             if (response.isSuccessful) {
@@ -65,17 +65,17 @@ class AuthRepositoryImpl(
                 val refreshToken: String = response.body()?.refresh_token!!
                 tokenRepository.setToken(accessToken, expiresIn)
                 tokenRepository.setRefreshToken(refreshToken)
-                true
+                AuthState.Success
             } else {
-                false
+                AuthState.Error("Sign in failed: ${response.errorBody()}")
             }
         } catch (e: Exception) {
-            false
+            AuthState.Error(e.message ?: "An unknown error occurred")
         }
     }
 
     override suspend fun signUp(email: String, password: String): Boolean {
-        return try {
+        /*return try {
             val response = api.signUp(LoginRequest(email, password))
             if (response.isSuccessful) {
                 val result = signIn(email, password)
@@ -85,7 +85,8 @@ class AuthRepositoryImpl(
             }
         } catch (e: Exception) {
             false
-        }
+        }*/
+        return false
     }
 
     override fun logOut() {

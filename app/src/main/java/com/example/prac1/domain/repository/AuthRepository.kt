@@ -1,10 +1,11 @@
 package com.example.prac1.domain.repository
 
 import com.example.prac1.data.api.model.UserInfoDataModel
+import com.example.prac1.data.repository.AuthState
 import java.io.File
 
 interface AuthRepository {
-    suspend fun signIn(email: String, password: String): Boolean
+    suspend fun signIn(email: String, password: String): AuthState
     suspend fun signUp(email: String, password: String): Boolean
     suspend fun isUserAuthorized(): Boolean
     fun logOut()

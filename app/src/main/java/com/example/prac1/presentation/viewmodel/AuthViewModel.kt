@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.prac1.data.repository.AuthResult
+import com.example.prac1.data.repository.AuthState
 import com.example.prac1.domain.repository.AuthRepository
 import com.example.prac1.domain.repository.UserUidRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +18,7 @@ import javax.inject.Inject
 
 class AuthViewModel @Inject constructor(private val authRepository: AuthRepository,
     private val uidRepository: UserUidRepository) : ViewModel() {
-    private val _signInState = MutableStateFlow<AuthResult<Boolean>?>(null)
+    private val _signInState = MutableStateFlow<AuthState>(AuthState.Default)
     val signInState = _signInState.asStateFlow()
 
     private val _isAuthorized = MutableStateFlow<Boolean?>(null)
@@ -54,16 +55,18 @@ class AuthViewModel @Inject constructor(private val authRepository: AuthReposito
     }
 
     fun signIn(email: String, password: String) {
-        _signInState.value = AuthResult.Loading
+        _signInState.value = AuthState.Loading
         viewModelScope.launch {
-            val success = authRepository.signIn(email, password)
-            _signInState.value = AuthResult.Success(success)
-            checkAuthorization()
+            val state = authRepository.signIn(email, password)
+            _signInState.value = state
+            if (state is AuthState.Success) {
+                checkAuthorization()
+            }
         }
     }
 
     fun signUp(email: String, password: String, imageUri: Uri?, context: Context) {
-        _signInState.value = AuthResult.Loading
+        /*_signInState.value = AuthResult.Loading
         viewModelScope.launch {
             val success = authRepository.signUp(email, password)
             _signInState.value = AuthResult.Success(success)
@@ -72,7 +75,7 @@ class AuthViewModel @Inject constructor(private val authRepository: AuthReposito
             url?.let {
                 authRepository.uploadUserInfo(email, it)
             }
-        }
+        }*/
     }
 
     private suspend fun checkAuthorization() {
@@ -83,6 +86,7 @@ class AuthViewModel @Inject constructor(private val authRepository: AuthReposito
     fun logOut() {
         viewModelScope.launch {
             authRepository.logOut()
+            _signInState.value = AuthState.Default
             checkAuthorization()
         }
     }

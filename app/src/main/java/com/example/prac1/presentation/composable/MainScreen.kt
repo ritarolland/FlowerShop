@@ -46,13 +46,10 @@ fun MainScreen(
     }
 
     if (isAuthorized == false) {
-        Scaffold { paddingValues ->
-            AuthNavHost(
-                paddingValues = paddingValues,
-                navController = navController,
-                authViewModel = authViewModel
-            )
-        }
+        AuthNavHost(
+            navController = navController,
+            authViewModel = authViewModel
+        )
     } else {
         Scaffold(
             bottomBar = {
