@@ -42,17 +42,27 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun uploadUserInfo(name: String, imageUrl: String) {
+    override suspend fun uploadUserInfo(name: String, imageUrl: String?, email: String) : AuthState {
         val uid = userUidRepository.getUserUid()
         Log.d("UPLOAD", uid.toString())
-        uid?.let {
+        if (uid == null) return AuthState.Error("Unauthorized")
+        else {
             val userInfo = UserInfoDataModel(
-                id = it,
+                id = uid,
                 name = name,
                 image_url = imageUrl,
-                phone_number = "+79051013134"
+                email = email
             )
-            api.addUserInfo(tokenRepository.createAuthHeader(), userInfo)
+            return try {
+                val response = api.addUserInfo(tokenRepository.createAuthHeader(), userInfo)
+                if (response.isSuccessful) {
+                    AuthState.Success
+                } else {
+                    AuthState.Error("Sign up failed: ${response.errorBody()}")
+                }
+            } catch (e: Exception) {
+                AuthState.Error(e.message ?: "An unknown error occurred")
+            }
         }
     }
 
@@ -74,19 +84,18 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun signUp(email: String, password: String): Boolean {
-        /*return try {
+    override suspend fun signUp(email: String, password: String): AuthState {
+        return try {
             val response = api.signUp(LoginRequest(email, password))
             if (response.isSuccessful) {
                 val result = signIn(email, password)
                 result
             } else {
-                false
+                AuthState.Error("Sign in failed: ${response.errorBody()}")
             }
         } catch (e: Exception) {
-            false
-        }*/
-        return false
+            AuthState.Error(e.message ?: "An unknown error occurred")
+        }
     }
 
     override fun logOut() {

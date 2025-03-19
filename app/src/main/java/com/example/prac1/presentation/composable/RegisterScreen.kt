@@ -5,10 +5,13 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,11 +20,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -31,13 +37,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,8 +66,10 @@ fun RegisterScreen(
 ) {
     val context = LocalContext.current
     var email by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    val signInState by authViewModel.signInState.collectAsState(null)
+    var passwordVisible by remember { mutableStateOf(false) }
+    val signInState by authViewModel.signInState.collectAsState(AuthState.Default)
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val pickImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
@@ -64,12 +78,259 @@ fun RegisterScreen(
         }
     )
     Scaffold(
-
-    ) { paddingValue ->
+        containerColor = colorResource(R.color.Neutral20)
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValue)
+                .padding(paddingValues)
+                .padding(16.dp)
+                .padding(top = 24.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.create_account),
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                color = colorResource(R.color.Text)
+            )
+            Spacer(modifier = Modifier.padding(8.dp))
+            Text(
+                text = stringResource(R.string.below_welcome),
+                fontSize = 16.sp,
+                color = colorResource(R.color.Neutral70)
+            )
+            Spacer(modifier = Modifier.padding(16.dp))
+            GlideImage(
+                imageUrl = imageUri?.toString(),
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .size(180.dp)
+                    .aspectRatio(1f)
+                    .clip(CircleShape)
+                    .clickable { pickImageLauncher.launch("image/*") },
+                description = ""
+            )
+            Spacer(modifier = Modifier.padding(12.dp))
+            Row(
+                modifier = Modifier
+                    .height(64.dp)
+                    .border(
+                        width = 1.dp, color = colorResource(R.color.Neutral40),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .background(
+                        color = colorResource(R.color.Neutral10),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .padding(horizontal = 16.dp)
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.CenterVertically),
+                    imageVector = ImageVector.vectorResource(R.drawable.user_icon),
+                    contentDescription = null,
+                    tint = colorResource(R.color.Neutral70)
+                )
+                TextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    textStyle = TextStyle(
+                        color = colorResource(R.color.Text),
+                        fontSize = 16.sp
+                    ),
+                    label = {
+                        Text(
+                            text = stringResource(R.string.name),
+                            color = colorResource(R.color.Neutral60)
+                        )
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .align(Alignment.CenterVertically),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        cursorColor = colorResource(R.color.Neutral70)
+                    )
+                )
+            }
+            Spacer(modifier = Modifier.padding(8.dp))
+            Row(
+                modifier = Modifier
+                    .height(64.dp)
+                    .border(
+                        width = 1.dp, color = colorResource(R.color.Neutral40),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .background(
+                        color = colorResource(R.color.Neutral10),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .padding(horizontal = 16.dp)
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.CenterVertically),
+                    imageVector = ImageVector.vectorResource(R.drawable.mail_icon),
+                    contentDescription = null,
+                    tint = colorResource(R.color.Neutral70)
+                )
+                TextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    textStyle = TextStyle(
+                        color = colorResource(R.color.Text),
+                        fontSize = 16.sp
+                    ),
+                    label = {
+                        Text(
+                            text = stringResource(R.string.email),
+                            color = colorResource(R.color.Neutral60)
+                        )
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .align(Alignment.CenterVertically),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        cursorColor = colorResource(R.color.Neutral70)
+                    )
+                )
+            }
+            Spacer(modifier = Modifier.padding(8.dp))
+            Row(
+                modifier = Modifier
+                    .height(64.dp)
+                    .border(
+                        width = 1.dp, color = colorResource(R.color.Neutral40),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .background(
+                        color = colorResource(R.color.Neutral10),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .padding(horizontal = 16.dp)
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.CenterVertically),
+                    imageVector = ImageVector.vectorResource(R.drawable.lock_icon),
+                    contentDescription = null,
+                    tint = colorResource(R.color.Neutral70)
+                )
+                TextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    textStyle = TextStyle(
+                        color = colorResource(R.color.Text),
+                        fontSize = 16.sp
+                    ),
+                    label = {
+                        Text(
+                            text = stringResource(R.string.password),
+                            color = colorResource(R.color.Neutral60)
+                        )
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .align(Alignment.CenterVertically),
+                    visualTransformation = if (passwordVisible) {
+                        VisualTransformation.None
+                    } else {
+                        StarPasswordTransformation()
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        cursorColor = colorResource(R.color.Neutral70)
+                    )
+                )
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.CenterVertically)
+                        .clickable(interactionSource = null, indication = null) {
+                            passwordVisible = !passwordVisible
+                        },
+                    imageVector = if (passwordVisible) ImageVector.vectorResource(R.drawable.visibility_off_icon)
+                    else ImageVector.vectorResource(R.drawable.visibility_icon),
+                    contentDescription = null,
+                    tint = colorResource(R.color.Neutral70)
+                )
+            }
+            Spacer(modifier = Modifier.padding(12.dp))
+            CustomButtonFilled(
+                onClick = {
+                    if (email.isNotEmpty() && password.isNotEmpty() && name.isNotEmpty()) {
+                        authViewModel.signUp(
+                            email = email,
+                            password = password,
+                            imageUri = imageUri,
+                            name = name,
+                            context = context
+                        )
+                    } else {
+                        Toast.makeText(context, R.string.fill_in_all_fields, Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                },
+                enabled = (signInState is AuthState.Default || signInState is AuthState.Error),
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    text = if (signInState is AuthState.Loading) stringResource(R.string.loading)
+                    else stringResource(R.string.create_account),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Spacer(modifier = Modifier.padding(16.dp))
+            Row(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                horizontalArrangement = Arrangement.spacedBy(1.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.have_account),
+                    fontSize = 16.sp,
+                    color = colorResource(R.color.Text)
+                )
+                Text(
+                    text = stringResource(R.string.login_small),
+                    fontSize = 16.sp,
+                    color = colorResource(R.color.Primary),
+                    modifier = Modifier.clickable(interactionSource = null, indication = null) {
+                        onNavigateToAuth()
+                    }
+                )
+            }
+            if (signInState is AuthState.Error) {
+                val error =
+                    "${context.getString(R.string.error)} ${(signInState as AuthState.Error).message}"
+                Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+            } else if (signInState is AuthState.Success)
+                Toast.makeText(context, R.string.success, Toast.LENGTH_SHORT).show()
+
+        }
+    }
+}
+
+
+
+
+        /*Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
                 .padding(16.dp),
             verticalArrangement = Arrangement.Center
         ) {
@@ -142,5 +403,4 @@ fun RegisterScreen(
             Text(text = "Already have an account? Sign in now",
                 modifier = Modifier.clickable { onNavigateToAuth() })
         }
-    }
-}
+*/

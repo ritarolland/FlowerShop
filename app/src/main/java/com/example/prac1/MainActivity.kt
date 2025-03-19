@@ -7,12 +7,17 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.prac1.app.MyApplication
 import com.example.prac1.presentation.composable.MainScreen
+import com.example.prac1.presentation.composable.SplashScreen
 import com.example.prac1.presentation.viewmodel.AllOrdersViewModel
 import com.example.prac1.presentation.viewmodel.AuthViewModel
 import com.example.prac1.presentation.viewmodel.CartViewModel
@@ -52,23 +57,30 @@ class MainActivity : ComponentActivity() {
         allOrdersViewModel = ViewModelProvider(this, viewModelFactory) [AllOrdersViewModel::class]
         orderViewModel = ViewModelProvider(this, viewModelFactory) [OrderViewModel::class]
         setContent {
+            var showSplash by remember { mutableStateOf(true) }
             MaterialTheme {
                 navController = rememberNavController()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen(
-                        navController = navController,
-                        authViewModel = authViewModel,
-                        catalogViewModel = catalogViewModel,
-                        detailsViewModel = detailsViewModel,
-                        cartViewModel = cartViewModel,
-                        profileViewModel = profileViewModel,
-                        favouritesViewModel = favouritesViewModel,
-                        orderViewModel = orderViewModel,
-                        allOrdersViewModel = allOrdersViewModel
-                    )
+                    if (showSplash) {
+                        SplashScreen {
+                            showSplash = false
+                        }
+                    } else {
+                        MainScreen(
+                            navController = navController,
+                            authViewModel = authViewModel,
+                            catalogViewModel = catalogViewModel,
+                            detailsViewModel = detailsViewModel,
+                            cartViewModel = cartViewModel,
+                            profileViewModel = profileViewModel,
+                            favouritesViewModel = favouritesViewModel,
+                            orderViewModel = orderViewModel,
+                            allOrdersViewModel = allOrdersViewModel
+                        )
+                    }
                 }
             }
         }

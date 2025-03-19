@@ -65,17 +65,22 @@ class AuthViewModel @Inject constructor(private val authRepository: AuthReposito
         }
     }
 
-    fun signUp(email: String, password: String, imageUri: Uri?, context: Context) {
-        /*_signInState.value = AuthResult.Loading
+    fun signUp(email: String, password: String, imageUri: Uri?, context: Context, name: String) {
+        _signInState.value = AuthState.Loading
         viewModelScope.launch {
-            val success = authRepository.signUp(email, password)
-            _signInState.value = AuthResult.Success(success)
-            checkAuthorization()
+            val state1 = authRepository.signUp(email, password)
             val url = uploadImage(imageUri, context)
-            url?.let {
-                authRepository.uploadUserInfo(email, it)
+            val state2 = authRepository.uploadUserInfo(name, url, email)
+            val state = when {
+                state1 is AuthState.Success && state2 is AuthState.Success -> AuthState.Success
+                state1 is AuthState.Error -> state1
+                else -> state2
             }
-        }*/
+            _signInState.value = state
+            if (state is AuthState.Success) {
+                checkAuthorization()
+            }
+        }
     }
 
     private suspend fun checkAuthorization() {

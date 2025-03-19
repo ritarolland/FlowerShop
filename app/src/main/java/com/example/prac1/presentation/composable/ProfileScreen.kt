@@ -133,7 +133,7 @@ fun ProfileScreen(
                                 .size(62.dp)
                                 .aspectRatio(1f)
                                 .clip(CircleShape),
-                            imageUrl = userInfo?.image_url ?: "",
+                            imageUrl = userInfo?.image_url,
                             description = ""
                         )
                         Column(
@@ -141,13 +141,13 @@ fun ProfileScreen(
                             verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             Text(
-                                text = "Veronika",
+                                text = userInfo?.name ?: stringResource(R.string.loading),
                                 color = colorResource(R.color.Text),
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = userInfo?.name ?: "example@gmail.com",
+                                text = userInfo?.email ?: "example@gmail.com",
                                 color = colorResource(R.color.Text),
                                 fontSize = 14.sp
                             )

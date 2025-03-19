@@ -40,6 +40,7 @@ fun MainScreen(
 ) {
     val isAuthorized by authViewModel.isAuthorized.collectAsState()
 
+
     LaunchedEffect(isAuthorized) {
         if (isAuthorized == true)
             profileViewModel.fetchProfileUrl()
