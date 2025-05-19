@@ -2,6 +2,7 @@ package com.example.prac1.presentation.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,18 +24,26 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -50,14 +59,25 @@ import com.example.prac1.domain.model.Flower
 import com.example.prac1.presentation.viewmodel.CatalogViewModel
 
 @Composable
-fun CatalogScreen(catalogViewModel: CatalogViewModel, onItemClick: (Flower) -> Unit) {
+fun CatalogScreen(
+    catalogViewModel: CatalogViewModel,
+    onItemClick: (Flower) -> Unit
+) {
+    val focusManager = LocalFocusManager.current
+    val searchHistory by catalogViewModel.history.collectAsState(emptyList())
     val catalogItems by catalogViewModel.catalogItems.collectAsState(emptyList())
     val searchQuery by catalogViewModel.searchQuery.collectAsState("")
     val searchResult by catalogViewModel.searchResult.collectAsState(SearchResult.Default)
     val favourites by catalogViewModel.favourites.collectAsState(emptyList())
     val keyboardController = LocalSoftwareKeyboardController.current
+    var showHistory by remember { mutableStateOf(false) }
 
     Scaffold(
+        modifier = Modifier.pointerInput(Unit) {
+            detectTapGestures(onTap = {
+                focusManager.clearFocus()
+            })
+        },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
@@ -83,9 +103,16 @@ fun CatalogScreen(catalogViewModel: CatalogViewModel, onItemClick: (Flower) -> U
                     contentDescription = null
                 )
                 BasicTextField(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .onFocusChanged { focusState ->
+                            showHistory = focusState.isFocused
+                        },
                     value = searchQuery,
-                    onValueChange = { text -> catalogViewModel.updateSearchQuery(text) },
+                    onValueChange = { text ->
+                        catalogViewModel.updateSearchQuery(text)
+                        if (text.isEmpty()) catalogViewModel.loadFoundItems("")
+                    },
                     textStyle = TextStyle(
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 16.sp
@@ -96,6 +123,9 @@ fun CatalogScreen(catalogViewModel: CatalogViewModel, onItemClick: (Flower) -> U
                     ),
                     keyboardActions = KeyboardActions(
                         onSearch = {
+                            catalogViewModel.loadFoundItems(searchQuery)
+                            catalogViewModel.addQuery(searchQuery)
+                            focusManager.clearFocus()
                             keyboardController?.hide()
                         }
                     ),
@@ -112,99 +142,117 @@ fun CatalogScreen(catalogViewModel: CatalogViewModel, onItemClick: (Flower) -> U
                         }
                     }
                 )
-                if(searchQuery.isNotEmpty()) {
+                if (searchQuery.isNotEmpty()) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.trash_icon),
                         tint = MaterialTheme.colorScheme.onSurface,
                         contentDescription = null,
-                        modifier = Modifier.clickable(interactionSource = null, indication = null) {
+                        modifier = Modifier.clickable(
+                            interactionSource = null,
+                            indication = null
+                        ) {
                             catalogViewModel.updateSearchQuery("")
+                            catalogViewModel.loadFoundItems("")
+                            focusManager.clearFocus()
                             keyboardController?.hide()
                         }
                     )
                 }
             }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.location_icon),
-                    tint = MaterialTheme.colorScheme.onBackground,
-                    contentDescription = null
-                )
-                Text(
-                    text = stringResource(R.string.deliver_to),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    modifier = Modifier.weight(1f),
-                    text = "3517 W. Gray St. Utica, Pennsylvania",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.down_icon),
-                    tint = MaterialTheme.colorScheme.onBackground,
-                    contentDescription = null
-                )
-            }
-            when(searchResult) {
-                SearchResult.Default -> {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+            if (searchHistory.isNotEmpty() && showHistory && searchQuery.isEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.surface,
+                            shape = RoundedCornerShape(16.dp)
+                        ),
+
                     ) {
-                        item(span = { GridItemSpan(2) }) { Spacer(modifier = Modifier.padding(2.dp)) }
-                        items(catalogItems.size) { i ->
-                            FlowerCard(flower = catalogItems[i],
-                                isFavourite = catalogItems[i].id in favourites,
-                                onClick = { onItemClick(catalogItems[i]) },
-                                onFavourite = { catalogViewModel.toggleIsFavourite(catalogItems[i].id) })
-                        }
-                        item(span = { GridItemSpan(2) }) { Spacer(modifier = Modifier.padding(2.dp)) }
-                    }
-                }
-                SearchResult.Error -> {
-                    Box(modifier = Modifier.fillMaxWidth().height(128.dp)) {
-                        Column(
-                            modifier = Modifier.align(Alignment.Center),
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            Text(
-                                text = stringResource(R.string.error_occurred),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Normal,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.align(Alignment.CenterHorizontally)
-                            )
-                            Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.refresh_icon),
-                                tint = MaterialTheme.colorScheme.onSurface,
-                                contentDescription = null,
-                                modifier = Modifier.clickable(interactionSource = null, indication = null) {
-                                    catalogViewModel.loadFoundItems(searchQuery)
-                                }.align(Alignment.CenterHorizontally)
-                            )
-                        }
-                    }
-                }
-                SearchResult.Loading -> {
-                    Box(
+                    Row(
                         modifier = Modifier
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                            .fillMaxWidth()
+                            .padding(end = 8.dp),
+                        horizontalArrangement = Arrangement.End
                     ) {
-                        CircularProgressIndicator()
+                        TextButton(
+                            onClick = { catalogViewModel.clear() }) {
+                            Text(stringResource(R.string.clear_history))
+                        }
                     }
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp), thickness =
+                        1.dp, color = MaterialTheme.colorScheme.onPrimary
+                    )
+                    searchHistory.forEach { item ->
+                        Column(
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                                .padding(top = 8.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.history_icon),
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    contentDescription = null
+                                )
+                                Text(
+                                    text = item.query,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            catalogViewModel.updateSearchQuery(item.query)
+                                            catalogViewModel.loadFoundItems(item.query)
+                                            catalogViewModel.addQuery(item.query)
+                                            focusManager.clearFocus()
+                                        }
+                                        .padding(horizontal = 8.dp),
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                            HorizontalDivider(
+                                modifier = Modifier.fillMaxWidth().padding(top = 8.dp), thickness =
+                                1.dp, color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.padding(8.dp))
                 }
-                SearchResult.Success -> {
-                    if (catalogItems.isNotEmpty()) {
+            } else {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.location_icon),
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        contentDescription = null
+                    )
+                    Text(
+                        text = stringResource(R.string.deliver_to),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = "3517 W. Gray St. Utica, Pennsylvania",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.down_icon),
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        contentDescription = null
+                    )
+                }
+                when (searchResult) {
+                    SearchResult.Default -> {
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(2),
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -219,20 +267,104 @@ fun CatalogScreen(catalogViewModel: CatalogViewModel, onItemClick: (Flower) -> U
                             }
                             item(span = { GridItemSpan(2) }) { Spacer(modifier = Modifier.padding(2.dp)) }
                         }
-                    } else {
-                        Box(modifier = Modifier.fillMaxWidth().height(128.dp)) {
-                            Text(
-                                text = stringResource(R.string.nothing_found),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Normal,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.align(Alignment.Center)
-                            )
+                    }
+
+                    SearchResult.Error -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(128.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier.align(Alignment.Center),
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.error_occurred),
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Normal,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                                )
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.refresh_icon),
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .clickable(
+                                            interactionSource = null,
+                                            indication = null
+                                        ) {
+                                            catalogViewModel.loadFoundItems(searchQuery)
+                                        }
+                                        .align(Alignment.CenterHorizontally)
+                                )
+                            }
+                        }
+                    }
+
+                    SearchResult.Loading -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    SearchResult.Success -> {
+                        if (catalogItems.isNotEmpty()) {
+                            LazyVerticalGrid(
+                                columns = GridCells.Fixed(2),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                item(span = { GridItemSpan(2) }) {
+                                    Spacer(
+                                        modifier = Modifier.padding(
+                                            2.dp
+                                        )
+                                    )
+                                }
+                                items(catalogItems.size) { i ->
+                                    FlowerCard(flower = catalogItems[i],
+                                        isFavourite = catalogItems[i].id in favourites,
+                                        onClick = { onItemClick(catalogItems[i]) },
+                                        onFavourite = {
+                                            catalogViewModel.toggleIsFavourite(
+                                                catalogItems[i].id
+                                            )
+                                        })
+                                }
+                                item(span = { GridItemSpan(2) }) {
+                                    Spacer(
+                                        modifier = Modifier.padding(
+                                            2.dp
+                                        )
+                                    )
+                                }
+                            }
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(128.dp)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.nothing_found),
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Normal,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.align(Alignment.Center)
+                                )
+                            }
                         }
                     }
 
                 }
             }
+
         }
     }
 }

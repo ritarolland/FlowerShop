@@ -23,6 +23,7 @@ import com.example.prac1.presentation.viewmodel.DetailsViewModel
 import com.example.prac1.presentation.viewmodel.FavouritesViewModel
 import com.example.prac1.presentation.viewmodel.OrderViewModel
 import com.example.prac1.presentation.viewmodel.ProfileViewModel
+import com.example.prac1.presentation.viewmodel.SearchViewModel
 import com.example.prac1.presentation.viewmodel.ThemeViewModel
 
 

@@ -59,6 +59,7 @@ fun BottomNavigationBar(
 
         if (navigationItem.route == Screens.Catalog.route) {
             catalogViewModel.updateSearchQuery("")
+            //catalogViewModel.loadFoundItems("")
         }
         navController.navigate(navigationItem.route) {
             popUpTo(navController.graph.findStartDestination().id) {
@@ -118,7 +119,7 @@ fun CustomBottomNavigation(
         modifier = Modifier.fillMaxWidth()
         .wrapContentHeight()
             .shadow(
-                color = MaterialTheme.colorScheme.tertiary,/////
+                color = MaterialTheme.colorScheme.tertiary,
                 borderRadius = 22.dp,
                 offsetX = 7.dp,
                 offsetY = 7.dp,
