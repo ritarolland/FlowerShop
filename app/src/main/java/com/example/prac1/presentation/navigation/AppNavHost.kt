@@ -24,6 +24,7 @@ import com.example.prac1.presentation.viewmodel.DetailsViewModel
 import com.example.prac1.presentation.viewmodel.FavouritesViewModel
 import com.example.prac1.presentation.viewmodel.OrderViewModel
 import com.example.prac1.presentation.viewmodel.ProfileViewModel
+import com.example.prac1.presentation.viewmodel.ThemeViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -36,6 +37,7 @@ fun AppNavHost(
     favouritesViewModel: FavouritesViewModel,
     allOrdersViewModel: AllOrdersViewModel,
     orderViewModel: OrderViewModel,
+    themeViewModel: ThemeViewModel,
     logOut: () -> Unit
 ) {
     NavHost(
@@ -90,6 +92,7 @@ fun AppNavHost(
         composable(Screens.Profile.route) {
             ProfileScreen(
                 viewModel = profileViewModel,
+                themeViewModel = themeViewModel,
                 navigateToOrders = { navController.navigate(Screens.AllOrders.route) },
                 navigateToFavourites = { navController.navigate(Screens.Favourites.route) },
                 logOut = logOut

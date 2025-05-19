@@ -11,11 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -27,8 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -46,14 +44,14 @@ fun AllOrdersScreen(allOrdersViewModel: AllOrdersViewModel, onOrderClick:(orderI
         allOrdersViewModel.loadOrders()
     }
     Scaffold(
-        containerColor = colorResource(R.color.Neutral20),
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
                         modifier = Modifier.height(30.dp),
                         text = stringResource(R.string.orders),
-                        color = colorResource(R.color.Text),
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -61,7 +59,7 @@ fun AllOrdersScreen(allOrdersViewModel: AllOrdersViewModel, onOrderClick:(orderI
                 navigationIcon = {
                     Icon(imageVector = ImageVector.vectorResource(R.drawable.left_icon),
                         contentDescription = null,
-                        tint = colorResource(R.color.Text),
+                        tint = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier
                             .clip(
                                 CircleShape
@@ -115,7 +113,7 @@ fun Order(order: OrderDataModel, onItemClick:() -> Unit) {
                     .size(24.dp),
                 imageVector = ImageVector.vectorResource(R.drawable.right_icon),
                 contentDescription = null,
-                tint = colorResource(R.color.Text)
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
         Spacer(modifier = Modifier.padding(2.dp))
@@ -127,7 +125,7 @@ fun Order(order: OrderDataModel, onItemClick:() -> Unit) {
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
             thickness = 1.dp,
-            color = colorResource(R.color.Neutral40)
+            color = MaterialTheme.colorScheme.onPrimary
         )
         Spacer(modifier = Modifier.padding(6.dp))
     }

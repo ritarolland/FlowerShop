@@ -24,6 +24,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -41,7 +42,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -82,7 +82,7 @@ fun DetailsScreen(
                 navigationIcon = {
                     Icon(imageVector = ImageVector.vectorResource(R.drawable.left_icon),
                         contentDescription = null,
-                        tint = colorResource(R.color.Neutral20),
+                        tint = MaterialTheme.colorScheme.background,
                         modifier = Modifier
                             .clip(
                                 CircleShape
@@ -95,7 +95,7 @@ fun DetailsScreen(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
             )
         },
-        containerColor = colorResource(R.color.Neutral20)
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         if (currentFlower == null) {
             Box(
@@ -126,7 +126,7 @@ fun DetailsScreen(
                         .verticalScroll(scrollState)
                         .offset(y = (LocalConfiguration.current.screenWidthDp - 24).dp)
                         .background(
-                            color = colorResource(R.color.Neutral10),
+                            color = MaterialTheme.colorScheme.surface,
                             shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
                         )
                         .padding(16.dp),
@@ -136,13 +136,13 @@ fun DetailsScreen(
                         text = flower.name.uppercase(),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Normal,
-                        color = colorResource(R.color.Text)
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
                         text = "₽${flower.price}",
                         fontSize = 32.sp,
                         fontWeight = FontWeight.Bold,
-                        color = colorResource(R.color.Text)
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -190,26 +190,26 @@ fun DetailsScreen(
                                 imageVector = if (favorite) ImageVector.vectorResource(R.drawable.heart_filled)
                                 else ImageVector.vectorResource(R.drawable.heart),
                                 contentDescription = null,
-                                tint = colorResource(R.color.Primary)
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
                     }
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth(),
                         thickness = 1.dp,
-                        color = colorResource(R.color.Neutral40)
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                     Text(
                         text = stringResource(R.string.product_description),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = colorResource(R.color.Text)
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
                         //text = flower.description,
                         text = "The tiny daisy-like flowers of German chamomile have white collars circling raised, cone-shaped, yellow centers and are less than an inch wide, growing on long, thin, light green stems. Sometimes chamomile grows wild and close to the ground, but you can also find it bordering herb gardens. It can reach up to 3 feet high. German chamomile is native to Europe, north Africa, and some parts of Asia. It is closely related to Roman chamomile (Chamaemelum nobile), which, although less commonly used, has many of the same medicinal properties.The tiny daisy-like flowers of German chamomile have white collars circling raised, cone-shaped, yellow centers and are less than an inch wide, growing on long, thin, light green stems. Sometimes chamomile grows wild and close to the ground, but you can also find it bordering herb gardens. It can reach up to 3 feet high. German chamomile is native to Europe, north Africa, and some parts of Asia. It is closely related to Roman chamomile (Chamaemelum nobile), which, although less commonly used, has many of the same medicinal properties.The tiny daisy-like flowers of German chamomile have white collars circling raised, cone-shaped, yellow centers and are less than an inch wide, growing on long, thin, light green stems. Sometimes chamomile grows wild and close to the ground, but you can also find it bordering herb gardens. It can reach up to 3 feet high. German chamomile is native to Europe, north Africa, and some parts of Asia. It is closely related to Roman chamomile (Chamaemelum nobile), which, although less commonly used, has many of the same medicinal properties.The tiny daisy-like flowers of German chamomile have white collars circling raised, cone-shaped, yellow centers and are less than an inch wide, growing on long, thin, light green stems. Sometimes chamomile grows wild and close to the ground, but you can also find it bordering herb gardens. It can reach up to 3 feet high. German chamomile is native to Europe, north Africa, and some parts of Asia. It is closely related to Roman chamomile (Chamaemelum nobile), which, although less commonly used, has many of the same medicinal properties.",
                         fontSize = 14.sp,
-                        color = colorResource(R.color.Text)
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                     Spacer(modifier = Modifier.padding(200.dp))
 

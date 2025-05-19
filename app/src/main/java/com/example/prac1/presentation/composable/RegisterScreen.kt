@@ -4,13 +4,11 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -21,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -38,23 +35,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.prac1.R
-import com.example.prac1.data.repository.AuthResult
 import com.example.prac1.data.repository.AuthState
 import com.example.prac1.presentation.viewmodel.AuthViewModel
 
@@ -78,7 +68,7 @@ fun RegisterScreen(
         }
     )
     Scaffold(
-        containerColor = colorResource(R.color.Neutral20)
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -91,13 +81,13 @@ fun RegisterScreen(
                 text = stringResource(R.string.create_account),
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
-                color = colorResource(R.color.Text)
+                color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(modifier = Modifier.padding(8.dp))
             Text(
                 text = stringResource(R.string.below_welcome),
                 fontSize = 16.sp,
-                color = colorResource(R.color.Neutral70)
+                color = MaterialTheme.colorScheme.onTertiary
             )
             Spacer(modifier = Modifier.padding(16.dp))
             GlideImage(
@@ -115,11 +105,11 @@ fun RegisterScreen(
                 modifier = Modifier
                     .height(64.dp)
                     .border(
-                        width = 1.dp, color = colorResource(R.color.Neutral40),
+                        width = 1.dp, color = MaterialTheme.colorScheme.onPrimary,
                         shape = RoundedCornerShape(12.dp)
                     )
                     .background(
-                        color = colorResource(R.color.Neutral10),
+                        color = MaterialTheme.colorScheme.surface,
                         shape = RoundedCornerShape(12.dp)
                     )
                     .padding(horizontal = 16.dp)
@@ -130,19 +120,19 @@ fun RegisterScreen(
                         .align(Alignment.CenterVertically),
                     imageVector = ImageVector.vectorResource(R.drawable.user_icon),
                     contentDescription = null,
-                    tint = colorResource(R.color.Neutral70)
+                    tint = MaterialTheme.colorScheme.onTertiary
                 )
                 TextField(
                     value = name,
                     onValueChange = { name = it },
                     textStyle = TextStyle(
-                        color = colorResource(R.color.Text),
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 16.sp
                     ),
                     label = {
                         Text(
                             text = stringResource(R.string.name),
-                            color = colorResource(R.color.Neutral60)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     },
                     modifier = Modifier
@@ -153,7 +143,7 @@ fun RegisterScreen(
                         unfocusedContainerColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        cursorColor = colorResource(R.color.Neutral70)
+                        cursorColor = MaterialTheme.colorScheme.onTertiary
                     )
                 )
             }
@@ -162,11 +152,11 @@ fun RegisterScreen(
                 modifier = Modifier
                     .height(64.dp)
                     .border(
-                        width = 1.dp, color = colorResource(R.color.Neutral40),
+                        width = 1.dp, color = MaterialTheme.colorScheme.onPrimary,
                         shape = RoundedCornerShape(12.dp)
                     )
                     .background(
-                        color = colorResource(R.color.Neutral10),
+                        color = MaterialTheme.colorScheme.surface,
                         shape = RoundedCornerShape(12.dp)
                     )
                     .padding(horizontal = 16.dp)
@@ -177,19 +167,19 @@ fun RegisterScreen(
                         .align(Alignment.CenterVertically),
                     imageVector = ImageVector.vectorResource(R.drawable.mail_icon),
                     contentDescription = null,
-                    tint = colorResource(R.color.Neutral70)
+                    tint = MaterialTheme.colorScheme.onTertiary
                 )
                 TextField(
                     value = email,
                     onValueChange = { email = it },
                     textStyle = TextStyle(
-                        color = colorResource(R.color.Text),
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 16.sp
                     ),
                     label = {
                         Text(
                             text = stringResource(R.string.email),
-                            color = colorResource(R.color.Neutral60)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     },
                     modifier = Modifier
@@ -200,7 +190,7 @@ fun RegisterScreen(
                         unfocusedContainerColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        cursorColor = colorResource(R.color.Neutral70)
+                        cursorColor = MaterialTheme.colorScheme.onTertiary
                     )
                 )
             }
@@ -209,11 +199,11 @@ fun RegisterScreen(
                 modifier = Modifier
                     .height(64.dp)
                     .border(
-                        width = 1.dp, color = colorResource(R.color.Neutral40),
+                        width = 1.dp, color = MaterialTheme.colorScheme.onPrimary,
                         shape = RoundedCornerShape(12.dp)
                     )
                     .background(
-                        color = colorResource(R.color.Neutral10),
+                        color = MaterialTheme.colorScheme.surface,
                         shape = RoundedCornerShape(12.dp)
                     )
                     .padding(horizontal = 16.dp)
@@ -224,19 +214,19 @@ fun RegisterScreen(
                         .align(Alignment.CenterVertically),
                     imageVector = ImageVector.vectorResource(R.drawable.lock_icon),
                     contentDescription = null,
-                    tint = colorResource(R.color.Neutral70)
+                    tint = MaterialTheme.colorScheme.onTertiary
                 )
                 TextField(
                     value = password,
                     onValueChange = { password = it },
                     textStyle = TextStyle(
-                        color = colorResource(R.color.Text),
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 16.sp
                     ),
                     label = {
                         Text(
                             text = stringResource(R.string.password),
-                            color = colorResource(R.color.Neutral60)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     },
                     modifier = Modifier
@@ -252,7 +242,7 @@ fun RegisterScreen(
                         unfocusedContainerColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        cursorColor = colorResource(R.color.Neutral70)
+                        cursorColor = MaterialTheme.colorScheme.onTertiary
                     )
                 )
                 Icon(
@@ -265,7 +255,7 @@ fun RegisterScreen(
                     imageVector = if (passwordVisible) ImageVector.vectorResource(R.drawable.visibility_off_icon)
                     else ImageVector.vectorResource(R.drawable.visibility_icon),
                     contentDescription = null,
-                    tint = colorResource(R.color.Neutral70)
+                    tint = MaterialTheme.colorScheme.onTertiary
                 )
             }
             Spacer(modifier = Modifier.padding(12.dp))
@@ -302,12 +292,12 @@ fun RegisterScreen(
                 Text(
                     text = stringResource(R.string.have_account),
                     fontSize = 16.sp,
-                    color = colorResource(R.color.Text)
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
                     text = stringResource(R.string.login_small),
                     fontSize = 16.sp,
-                    color = colorResource(R.color.Primary),
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.clickable(interactionSource = null, indication = null) {
                         onNavigateToAuth()
                     }

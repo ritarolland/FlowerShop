@@ -23,6 +23,7 @@ import com.example.prac1.presentation.viewmodel.DetailsViewModel
 import com.example.prac1.presentation.viewmodel.FavouritesViewModel
 import com.example.prac1.presentation.viewmodel.OrderViewModel
 import com.example.prac1.presentation.viewmodel.ProfileViewModel
+import com.example.prac1.presentation.viewmodel.ThemeViewModel
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -36,7 +37,8 @@ fun MainScreen(
     profileViewModel: ProfileViewModel,
     favouritesViewModel: FavouritesViewModel,
     allOrdersViewModel: AllOrdersViewModel,
-    orderViewModel: OrderViewModel
+    orderViewModel: OrderViewModel,
+    themeViewModel: ThemeViewModel
 ) {
     val isAuthorized by authViewModel.isAuthorized.collectAsState()
 
@@ -66,6 +68,7 @@ fun MainScreen(
                 favouritesViewModel = favouritesViewModel,
                 allOrdersViewModel = allOrdersViewModel,
                 orderViewModel = orderViewModel,
+                themeViewModel = themeViewModel,
                 logOut = { authViewModel.logOut() }
             )
         }

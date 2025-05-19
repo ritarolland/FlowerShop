@@ -2,7 +2,6 @@ package com.example.prac1.presentation.navigation
 
 import android.graphics.BlurMaskFilter
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,13 +23,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import com.example.prac1.R
 import com.example.prac1.presentation.viewmodel.CatalogViewModel
 
 @Composable
@@ -121,7 +118,7 @@ fun CustomBottomNavigation(
         modifier = Modifier.fillMaxWidth()
         .wrapContentHeight()
             .shadow(
-                color = colorResource(R.color.Neutral50),
+                color = MaterialTheme.colorScheme.tertiary,/////
                 borderRadius = 22.dp,
                 offsetX = 7.dp,
                 offsetY = 7.dp,
@@ -129,7 +126,7 @@ fun CustomBottomNavigation(
                 blurRadius = 22.dp
             )
         .background(
-            color = colorResource(R.color.Neutral10),
+            color = MaterialTheme.colorScheme.surface,
             shape = RoundedCornerShape(topStart = 14.dp, topEnd = 14.dp)
         )
     ) {
@@ -139,7 +136,7 @@ fun CustomBottomNavigation(
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .background(
-                        color = colorResource(R.color.Neutral10),
+                        color = MaterialTheme.colorScheme.surface,
                         shape = RoundedCornerShape(topStart = 14.dp, topEnd = 14.dp)
                     )
                     .padding(horizontal = 16.dp, vertical = 12.dp),
@@ -164,7 +161,7 @@ fun CustomBottomNavigation(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(34.dp)
-                    .background(color = colorResource(R.color.Neutral10))
+                    .background(color = MaterialTheme.colorScheme.surface)
             )
         }
     }
@@ -185,11 +182,11 @@ fun CustomBottomNavigationItem(
         Icon(
             imageVector = ImageVector.vectorResource(item.icon),
             contentDescription = stringResource(item.label),
-            tint = if (isSelected) colorResource(R.color.Primary) else colorResource(R.color.Neutral50)
+            tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimaryContainer
         )
         Text(
             text = stringResource(item.label),
-            color = if (isSelected) colorResource(R.color.Primary) else colorResource(R.color.Neutral50),
+            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimaryContainer,
             fontSize = 14.sp,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
         )

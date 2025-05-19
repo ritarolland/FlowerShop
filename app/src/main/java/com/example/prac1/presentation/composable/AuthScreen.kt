@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -30,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
@@ -56,7 +56,7 @@ fun AuthScreen(
     val signInState by authViewModel.signInState.collectAsState(AuthState.Default)
     var passwordVisible by remember { mutableStateOf(false) }
     Scaffold(
-        containerColor = colorResource(R.color.Neutral20)
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -69,24 +69,24 @@ fun AuthScreen(
                 text = stringResource(R.string.welcome),
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
-                color = colorResource(R.color.Text)
+                color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(modifier = Modifier.padding(8.dp))
             Text(
                 text = stringResource(R.string.below_welcome),
                 fontSize = 16.sp,
-                color = colorResource(R.color.Neutral70)
+                color = MaterialTheme.colorScheme.onTertiary
             )
             Spacer(modifier = Modifier.padding(32.dp))
             Row(
                 modifier = Modifier
                     .height(64.dp)
                     .border(
-                        width = 1.dp, color = colorResource(R.color.Neutral40),
+                        width = 1.dp, color = MaterialTheme.colorScheme.onPrimary,
                         shape = RoundedCornerShape(12.dp)
                     )
                     .background(
-                        color = colorResource(R.color.Neutral10),
+                        color = MaterialTheme.colorScheme.surface,
                         shape = RoundedCornerShape(12.dp)
                     )
                     .padding(horizontal = 16.dp)
@@ -97,19 +97,19 @@ fun AuthScreen(
                         .align(Alignment.CenterVertically),
                     imageVector = ImageVector.vectorResource(R.drawable.mail_icon),
                     contentDescription = null,
-                    tint = colorResource(R.color.Neutral70)
+                    tint = MaterialTheme.colorScheme.onTertiary
                 )
                 TextField(
                     value = email,
                     onValueChange = { email = it },
                     textStyle = TextStyle(
-                        color = colorResource(R.color.Text),
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 16.sp
                     ),
                     label = {
                         Text(
                             text = stringResource(R.string.email),
-                            color = colorResource(R.color.Neutral60)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     },
                     modifier = Modifier
@@ -120,7 +120,7 @@ fun AuthScreen(
                         unfocusedContainerColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        cursorColor = colorResource(R.color.Neutral70)
+                        cursorColor = MaterialTheme.colorScheme.onTertiary
                     )
                 )
             }
@@ -129,11 +129,11 @@ fun AuthScreen(
                 modifier = Modifier
                     .height(64.dp)
                     .border(
-                        width = 1.dp, color = colorResource(R.color.Neutral40),
+                        width = 1.dp, color = MaterialTheme.colorScheme.onPrimary,
                         shape = RoundedCornerShape(12.dp)
                     )
                     .background(
-                        color = colorResource(R.color.Neutral10),
+                        color = MaterialTheme.colorScheme.surface,
                         shape = RoundedCornerShape(12.dp)
                     )
                     .padding(horizontal = 16.dp)
@@ -144,19 +144,19 @@ fun AuthScreen(
                         .align(Alignment.CenterVertically),
                     imageVector = ImageVector.vectorResource(R.drawable.lock_icon),
                     contentDescription = null,
-                    tint = colorResource(R.color.Neutral70)
+                    tint = MaterialTheme.colorScheme.onTertiary
                 )
                 TextField(
                     value = password,
                     onValueChange = { password = it },
                     textStyle = TextStyle(
-                        color = colorResource(R.color.Text),
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 16.sp
                     ),
                     label = {
                         Text(
                             text = stringResource(R.string.password),
-                            color = colorResource(R.color.Neutral60)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     },
                     modifier = Modifier
@@ -172,7 +172,7 @@ fun AuthScreen(
                         unfocusedContainerColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        cursorColor = colorResource(R.color.Neutral70)
+                        cursorColor = MaterialTheme.colorScheme.onTertiary
                     )
                 )
                 Icon(
@@ -185,7 +185,7 @@ fun AuthScreen(
                     imageVector = if (passwordVisible) ImageVector.vectorResource(R.drawable.visibility_off_icon)
                     else ImageVector.vectorResource(R.drawable.visibility_icon),
                     contentDescription = null,
-                    tint = colorResource(R.color.Neutral70)
+                    tint = MaterialTheme.colorScheme.onTertiary
                 )
             }
             Spacer(modifier = Modifier.padding(12.dp))
@@ -216,12 +216,12 @@ fun AuthScreen(
                 Text(
                     text = stringResource(R.string.no_account),
                     fontSize = 16.sp,
-                    color = colorResource(R.color.Text)
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
                     text = stringResource(R.string.register),
                     fontSize = 16.sp,
-                    color = colorResource(R.color.Primary),
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.clickable(interactionSource = null, indication = null) {
                         onNavigateToRegister()
                     }

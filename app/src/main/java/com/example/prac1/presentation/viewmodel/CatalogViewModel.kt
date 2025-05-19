@@ -2,6 +2,7 @@ package com.example.prac1.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.prac1.data.repository.SearchResult
 import com.example.prac1.domain.model.Flower
 import com.example.prac1.domain.repository.FavouritesRepository
 import com.example.prac1.domain.repository.FlowersRepository
@@ -20,20 +21,36 @@ class CatalogViewModel@Inject constructor(
 ) : ViewModel() {
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
+    private val _searchResult = MutableStateFlow<SearchResult>(SearchResult.Default)
+    val searchResult = _searchResult.asStateFlow()
     private val _allCatalogItems = MutableStateFlow<List<Flower>>(emptyList())
+    private val _foundItems = MutableStateFlow<List<Flower>>(emptyList())
     private val _favourites = MutableStateFlow<List<String>>(emptyList())
     val favourites = _favourites.asStateFlow()
     val catalogItems: StateFlow<List<Flower>> = combine(
-        _searchQuery,
-        _allCatalogItems
-    ) { query, items ->
-        if (query.isBlank()) items
-        else items.filter { it.name.contains(query, ignoreCase = true) }
+        _allCatalogItems,
+        _foundItems
+    ) { items, foundItems ->
+        if (_searchResult.value is SearchResult.Default) items
+        else foundItems
     }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     init {
         loadCatalogItems()
         loadFavourites()
+    }
+
+    fun loadFoundItems(query: String) {
+        viewModelScope.launch {
+            _searchResult.value = SearchResult.Loading
+            repository.search(query).collect { items ->
+                if (items == null) _searchResult.value = SearchResult.Error
+                else {
+                    _searchResult.value = SearchResult.Success
+                    _foundItems.value = items
+                }
+            }
+        }
     }
 
     private fun loadFavourites() {
@@ -57,7 +74,9 @@ class CatalogViewModel@Inject constructor(
     }
 
     fun updateSearchQuery(query: String) {
-        _searchQuery.value = query // Обновляем запрос поиска
+        _searchQuery.value = query
+        if (query == "") _searchResult.value = SearchResult.Default
+        loadFoundItems(query)
     }
 
     fun isFavorite(id: String): Boolean {

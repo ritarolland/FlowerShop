@@ -9,13 +9,13 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -33,7 +33,7 @@ fun QuantitySelectionCard(
             .border(
                 width = 1.dp,
                 shape = RoundedCornerShape(8.dp),
-                color = colorResource(R.color.Neutral40)
+                color = MaterialTheme.colorScheme.onPrimary
             )
             .padding(vertical = 4.dp, horizontal = 8.dp)
             .background(
@@ -53,7 +53,7 @@ fun QuantitySelectionCard(
                 },
             imageVector = ImageVector.vectorResource(R.drawable.minus_icon),
             contentDescription = null,
-            tint = colorResource(R.color.Primary)
+            tint = MaterialTheme.colorScheme.primary
         )
         Text(
             text = quantity.toString(),
@@ -71,7 +71,7 @@ fun QuantitySelectionCard(
                 },
             imageVector = ImageVector.vectorResource(R.drawable.add_icon),
             contentDescription = null,
-            tint = colorResource(R.color.Primary)
+            tint = MaterialTheme.colorScheme.primary
         )
     }
 }

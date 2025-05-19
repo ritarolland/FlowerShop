@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -50,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.prac1.R
 import com.example.prac1.presentation.viewmodel.ProfileViewModel
+import com.example.prac1.presentation.viewmodel.ThemeViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,12 +60,15 @@ import com.example.prac1.presentation.viewmodel.ProfileViewModel
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel,
+    themeViewModel: ThemeViewModel,
     navigateToFavourites: () -> Unit,
     navigateToOrders: () -> Unit,
     logOut: () -> Unit
 ) {
+    val isDarkTheme by themeViewModel.isDarkTheme.collectAsState(isSystemInDarkTheme())
     val userInfo by viewModel.userInfo.collectAsState(null)
     val context = LocalContext.current
+
 
     viewModel.fetchProfileUrl()
 
@@ -71,7 +77,7 @@ fun ProfileScreen(
     }
 
     Scaffold(
-        containerColor = colorResource(R.color.Neutral20),
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -81,7 +87,7 @@ fun ProfileScreen(
                     Text(
                         modifier = Modifier.height(30.dp),
                         text = stringResource(R.string.my_account),
-                        color = colorResource(R.color.Neutral10),
+                        color = MaterialTheme.colorScheme.surface,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -95,11 +101,26 @@ fun ProfileScreen(
                                 interactionSource = null,
                                 indication = null
                             ) {
+                                themeViewModel.toggleTheme()
+                            },
+                        imageVector = if (isDarkTheme) ImageVector.vectorResource(R.drawable.light_mode_icon)
+                        else ImageVector.vectorResource(R.drawable.dark_mode_icon),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.surface
+                    )
+                    Icon(
+                        modifier = Modifier
+                            .padding(end = 16.dp)
+                            .size(30.dp)
+                            .clickable(
+                                interactionSource = null,
+                                indication = null
+                            ) {
                                 logOut()
                             },
                         imageVector = ImageVector.vectorResource(R.drawable.logout_icon),
                         contentDescription = null,
-                        tint = colorResource(R.color.Neutral10)
+                        tint = MaterialTheme.colorScheme.surface
                     )
                 }
             )
@@ -121,7 +142,7 @@ fun ProfileScreen(
                         .fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(4.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = colorResource(R.color.Neutral10)
+                        containerColor = MaterialTheme.colorScheme.surface
                     )
                 ) {
                     Row(
@@ -142,13 +163,13 @@ fun ProfileScreen(
                         ) {
                             Text(
                                 text = userInfo?.name ?: stringResource(R.string.loading),
-                                color = colorResource(R.color.Text),
+                                color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
                                 text = userInfo?.email ?: "example@gmail.com",
-                                color = colorResource(R.color.Text),
+                                color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 14.sp
                             )
                         }
@@ -156,7 +177,7 @@ fun ProfileScreen(
                 }
                 Text(
                     text = stringResource(R.string.general),
-                    color = colorResource(R.color.Text),
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -174,7 +195,7 @@ fun ProfileScreen(
                 }
                 Text(
                     text = stringResource(R.string.help),
-                    color = colorResource(R.color.Text),
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -208,7 +229,7 @@ fun ProfileItemCard(
             .clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(R.color.Neutral10)
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Row(
@@ -222,14 +243,14 @@ fun ProfileItemCard(
                     .size(24.dp),
                 imageVector = imageVector,
                 contentDescription = null,
-                tint = colorResource(R.color.Text)
+                tint = MaterialTheme.colorScheme.onBackground
             )
             Text(
                 modifier = Modifier
                     .height(24.dp)
                     .weight(1f),
                 text = text,
-                color = colorResource(R.color.Text),
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 16.sp
             )
             Icon(
@@ -237,7 +258,7 @@ fun ProfileItemCard(
                     .size(24.dp),
                 imageVector = ImageVector.vectorResource(R.drawable.right_icon),
                 contentDescription = null,
-                tint = colorResource(R.color.Text)
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
     }

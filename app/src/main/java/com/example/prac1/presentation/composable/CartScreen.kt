@@ -23,6 +23,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -39,7 +40,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -68,7 +68,7 @@ fun CartScreen(
     val selectedItems by cartViewModel.selectedItems.collectAsState(emptyList())
 
     Scaffold(
-        containerColor = colorResource(R.color.Neutral20),
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -78,7 +78,7 @@ fun CartScreen(
                     Text(
                         modifier = Modifier.height(30.dp),
                         text = stringResource(R.string.my_cart),
-                        color = colorResource(R.color.Text),
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -98,8 +98,8 @@ fun CartScreen(
                                 },
                             imageVector = ImageVector.vectorResource(R.drawable.trash_icon),
                             contentDescription = null,
-                            tint = if (selectedItems.isNotEmpty()) colorResource(R.color.Primary)
-                            else colorResource(R.color.Neutral60)
+                            tint = if (selectedItems.isNotEmpty()) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.onSurface
                         )
                         CustomButtonOutlined(
                             modifier = Modifier
@@ -112,7 +112,7 @@ fun CartScreen(
                         ) {
                             Text(
                                 text = stringResource(R.string.done),
-                                color = colorResource(R.color.Primary),
+                                color = MaterialTheme.colorScheme.primary,
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -129,7 +129,7 @@ fun CartScreen(
                         ) {
                             Text(
                                 text = stringResource(R.string.select),
-                                color = colorResource(R.color.Primary),
+                                color = MaterialTheme.colorScheme.primary,
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -181,8 +181,8 @@ fun CartScreen(
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth(),
                 enabled = totalCost > 0,
-                containerColor = if (totalCost > 0) colorResource(R.color.Primary)
-                else colorResource(R.color.Neutral60)
+                containerColor = if (totalCost > 0) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.onPrimary
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -192,14 +192,12 @@ fun CartScreen(
                         modifier = Modifier.weight(1f),
                         text = stringResource(R.string.order),
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = colorResource(R.color.Neutral10)
+                        fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = "₽$totalCost",
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = colorResource(R.color.Neutral10)
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
@@ -225,7 +223,7 @@ fun CartItemCard(
             .clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(R.color.Neutral10)
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Row(
@@ -259,7 +257,7 @@ fun CartItemCard(
                             fontWeight = FontWeight.Normal,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            color = colorResource(R.color.Text)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                         Text(
                             text = "₽${flower.price * cartItem.quantity}",
@@ -267,7 +265,7 @@ fun CartItemCard(
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            color = colorResource(R.color.Text)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     }
                     if (isSelectionMode) {
@@ -276,8 +274,8 @@ fun CartItemCard(
                             checked = isChecked,
                             onCheckedChange = onCheckedChange,
                             colors = CheckboxDefaults.colors(
-                                uncheckedColor = colorResource(R.color.Neutral60),
-                                checkedColor = colorResource(R.color.Primary),
+                                uncheckedColor = MaterialTheme.colorScheme.onSurface,
+                                checkedColor = MaterialTheme.colorScheme.primary,
                             )
                         )
                     }
@@ -295,7 +293,7 @@ fun CartItemCard(
                     imageVector = if (favorite) ImageVector.vectorResource(R.drawable.heart_filled)
                     else ImageVector.vectorResource(R.drawable.heart),
                     contentDescription = null,
-                    tint = if (favorite) colorResource(R.color.Primary) else colorResource(R.color.Neutral60)
+                    tint = if (favorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                 )
                 QuantitySelectionCard(
                     modifier = Modifier

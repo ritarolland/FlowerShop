@@ -34,6 +34,22 @@ class FlowersRepositoryImpl@Inject constructor(
         }
     }
 
+    override suspend fun search(query: String): Flow<List<Flower>?> {
+        return flow {
+            try {
+                val response = api.search(name = "ilike.*$query*")
+                if (response.isSuccessful) {
+                    val flowers = response.body()?.map { mapToDomain(it) } ?: emptyList()
+                    emit(flowers)
+                } else {
+                    emit(null)
+                }
+            } catch (e: Exception) {
+                emit(null)
+            }
+        }
+    }
+
     override suspend fun saveFlowersToCache(flowers: List<Flower>) {
         val flowerEntities = flowers.map { mapToEntity(it) }
         flowerDao.saveFlowers(flowerEntities)

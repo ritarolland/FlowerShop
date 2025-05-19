@@ -6,8 +6,9 @@ import com.example.prac1.data.api.FlowerApi
 import com.example.prac1.data.api.requests.RefreshTokenRequest
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
+import javax.inject.Inject
 
-class TokenRepositoryImpl(
+class TokenRepositoryImpl @Inject constructor(
     private val sharedPreferences: SharedPreferences,
     private val api: FlowerApi
 ) : TokenRepository {

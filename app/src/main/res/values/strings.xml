@@ -48,6 +48,9 @@
     <string name="create_account">Create Account</string>
     <string name="below_create_account">Fill in your details below to get started on a seamless shopping experience.</string>
     <string name="name">Name</string>
+    <string name="enter_query">Enter search query</string>
+    <string name="nothing_found">Nothing found</string>
+    <string name="error_occurred">An error occurred</string>
 
 
 

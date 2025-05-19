@@ -23,11 +23,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -44,8 +43,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -82,14 +79,14 @@ fun OrderScreen(
         }
     }
     Scaffold(
-        containerColor = colorResource(R.color.Neutral20),
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
                         modifier = Modifier.height(30.dp),
                         text = stringResource(R.string.order_details),
-                        color = colorResource(R.color.Text),
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -97,7 +94,7 @@ fun OrderScreen(
                 navigationIcon = {
                     Icon(imageVector = ImageVector.vectorResource(R.drawable.left_icon),
                         contentDescription = null,
-                        tint = colorResource(R.color.Text),
+                        tint = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier
                             .clip(
                                 CircleShape
@@ -125,7 +122,7 @@ fun OrderScreen(
                 item {
                     Text(
                         text = stringResource(R.string.general),
-                        color = colorResource(R.color.Text),
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -137,7 +134,7 @@ fun OrderScreen(
                             .fillMaxWidth(),
                         elevation = CardDefaults.cardElevation(4.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = colorResource(R.color.Neutral10)
+                            containerColor = MaterialTheme.colorScheme.surface
                         )
                     ) {
                         Column(
@@ -150,12 +147,12 @@ fun OrderScreen(
                                 Text(
                                     modifier = Modifier.weight(1f),
                                     text = stringResource(R.string.timestamp),
-                                    color = colorResource(R.color.Primary),
+                                    color = MaterialTheme.colorScheme.primary,
                                     fontSize = 16.sp
                                 )
                                 Text(
                                     text = order.created_at.toString(),
-                                    color = colorResource(R.color.Text),
+                                    color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 16.sp
                                 )
                             }
@@ -166,12 +163,12 @@ fun OrderScreen(
                                 Text(
                                     modifier = Modifier.weight(1f),
                                     text = stringResource(R.string.total_cost),
-                                    color = colorResource(R.color.Primary),
+                                    color = MaterialTheme.colorScheme.primary,
                                     fontSize = 16.sp
                                 )
                                 Text(
                                     text = "₽${order.total_price}",
-                                    color = colorResource(R.color.Text),
+                                    color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -182,7 +179,7 @@ fun OrderScreen(
                 item {
                     Text(
                         text = stringResource(R.string.items),
-                        color = colorResource(R.color.Text),
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -225,7 +222,7 @@ fun OrderItemCard(
             .clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(R.color.Neutral10)
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Row(
@@ -259,7 +256,7 @@ fun OrderItemCard(
                             fontWeight = FontWeight.Normal,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            color = colorResource(R.color.Text)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                         Text(
                             text = "₽${flower.price * cartItem.quantity}",
@@ -267,7 +264,7 @@ fun OrderItemCard(
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            color = colorResource(R.color.Text)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 }
@@ -284,7 +281,7 @@ fun OrderItemCard(
                     imageVector = if (favorite) ImageVector.vectorResource(R.drawable.heart_filled)
                     else ImageVector.vectorResource(R.drawable.heart),
                     contentDescription = null,
-                    tint = if (favorite) colorResource(R.color.Primary) else colorResource(R.color.Neutral60)
+                    tint = if (favorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                 )
                 QuantityCard(
                     modifier = Modifier
@@ -308,7 +305,7 @@ fun QuantityCard(
             .border(
                 width = 1.dp,
                 shape = RoundedCornerShape(8.dp),
-                color = colorResource(R.color.Neutral40)
+                color = MaterialTheme.colorScheme.onPrimary
             )
             .padding(vertical = 4.dp, horizontal = 8.dp)
             .background(

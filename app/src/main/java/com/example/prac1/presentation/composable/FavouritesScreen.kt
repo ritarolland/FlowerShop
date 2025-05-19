@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -23,8 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -43,14 +42,14 @@ fun FavouritesScreen(
 ) {
     val favouriteFlowers by favouritesViewModel.favouriteFlowers.collectAsState(emptyList())
     Scaffold(
-        containerColor = colorResource(R.color.Neutral20),
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
                         modifier = Modifier.height(30.dp),
                         text = stringResource(R.string.favorites),
-                        color = colorResource(R.color.Text),
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -58,7 +57,7 @@ fun FavouritesScreen(
                 navigationIcon = {
                     Icon(imageVector = ImageVector.vectorResource(R.drawable.left_icon),
                         contentDescription = null,
-                        tint = colorResource(R.color.Text),
+                        tint = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier
                             .clip(
                                 CircleShape

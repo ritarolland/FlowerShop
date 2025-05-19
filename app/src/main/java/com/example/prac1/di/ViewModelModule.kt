@@ -11,6 +11,7 @@ import com.example.prac1.presentation.viewmodel.DetailsViewModel
 import com.example.prac1.presentation.viewmodel.FavouritesViewModel
 import com.example.prac1.presentation.viewmodel.OrderViewModel
 import com.example.prac1.presentation.viewmodel.ProfileViewModel
+import com.example.prac1.presentation.viewmodel.ThemeViewModel
 import com.example.prac1.presentation.viewmodel.ViewModelFactory
 import dagger.Binds
 import dagger.Module
@@ -58,6 +59,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(OrderViewModel::class)
     abstract fun bindOrderViewModel(viewModel: OrderViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ThemeViewModel::class)
+    abstract fun bindThemeViewModel(viewModel: ThemeViewModel): ViewModel
 
     @Binds
     abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

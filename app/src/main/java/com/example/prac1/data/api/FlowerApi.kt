@@ -32,6 +32,11 @@ interface FlowerApi {
     @GET("/rest/v1/flower_items")
     suspend fun getFlowersCatalog(): Response<List<FlowerDataModel>>
 
+    @GET("/rest/v1/flower_items")
+    suspend fun search(
+        @Query("name") name: String
+    ): Response<List<FlowerDataModel>>
+
     @GET("/rest/v1/cart_items?order_id=is.null")
     suspend fun getCartItems(
         @Header("Authorization") token: String

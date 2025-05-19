@@ -18,8 +18,10 @@ import com.example.prac1.data.api.FlowerApi
 import com.example.prac1.data.db.FlowerDao
 import com.example.prac1.data.repository.FavouritesRepositoryImpl
 import com.example.prac1.data.repository.OrdersRepositoryImpl
+import com.example.prac1.data.repository.ThemeRepositoryImpl
 import com.example.prac1.domain.repository.FavouritesRepository
 import com.example.prac1.domain.repository.OrdersRepository
+import com.example.prac1.domain.repository.ThemeRepository
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -73,6 +75,12 @@ object RepositoryModule {
     @Singleton
     fun provideTokenRepository(sharedPreferences: SharedPreferences, api: FlowerApi): TokenRepository {
         return TokenRepositoryImpl(sharedPreferences, api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideThemeRepository(sharedPreferences: SharedPreferences): ThemeRepository {
+        return ThemeRepositoryImpl(sharedPreferences)
     }
 
     @Provides
